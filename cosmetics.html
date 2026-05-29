@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Премиальная косметика — Steel Beard Barbershop</title>
+    <style>
+        :root {
+            --orange: #ff751f; 
+            --btn-orange: #f08244;
+            --dark: #1a1a1a;
+            --light-grey: #f4f4f4;
+            --table-bg: #d9d9d9;
+            --text-muted: #555;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0; padding: 0; color: #333; background-color: #fff;
+            -webkit-font-smoothing: antialiased; scroll-behavior: smooth;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* HEADER */
+        header {
+            background-color: var(--dark); color: white; padding: 15px 0;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-box { display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
+        nav a:hover { color: var(--orange); }
+        
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        .cart-icon-btn { background: none; border: none; color: white; cursor: pointer; position: relative; font-size: 24px; }
+        .cart-count { 
+            position: absolute; top: -8px; right: -10px; background: var(--orange); 
+            color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; font-weight: bold;
+        }
+        .header-phone { font-weight: bold; font-size: 16px; }
+        .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+
+        /* COSMETICS GRID */
+        .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
+        .cosm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin: 40px 0; }
+        .prod-card { background: var(--light-grey); padding: 30px; border-radius: 30px; text-align: center; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .prod-card:hover { transform: translateY(-10px); }
+        .prod-img-box { height: 220px; background: white; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .prod-img-box img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; }
+        .prod-card p { font-weight: bold; font-size: 16px; margin: 10px 0; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        .prod-price { color: var(--orange); font-weight: bold; font-size: 20px; display: block; margin-bottom: 15px; }
+        .btn-add-cart { background: var(--orange); color: white; border: none; width: 100%; padding: 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: auto; }
+
+        /* CART DRAWER */
+        .cart-drawer {
+            position: fixed; top: 0; right: -420px; width: 400px; height: 100%;
+            background: white; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 35px; box-sizing: border-box;
+            display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+        .cart-drawer.active { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--orange); padding-bottom: 20px; margin-bottom: 20px; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
+        .cart-item-name { font-weight: bold; font-size: 16px; }
+        .cart-item-price { color: var(--orange); font-weight: bold; margin-left: 10px; }
+        .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 10px; }
+        .cart-footer { padding-top: 25px; border-top: 1px solid #eee; }
+        .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; }
+        .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--dark); color: white; padding: 50px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); }
+        .modal-close { position: absolute; top: 25px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
+        .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
+
+        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
+
+        @media (max-width: 992px) {
+            .cart-drawer { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container nav-box">
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="staff.html">Персонал</a>
+            <a href="services.html">Услуги</a>
+            <a href="#" style="color: var(--orange);">Косметика</a>
+        </nav>
+        <div class="header-actions">
+            <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
+            <span class="header-phone">+7 777 726 22 88</span>
+            <button class="btn-header open-modal">Записаться</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <h2 class="section-title">Премиальная косметика</h2>
+    <div class="cosm-grid">
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png3.jpeg" alt="Шампунь"></div>
+            <p>Шампунь Steel</p>
+            <span class="prod-price">5500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Шампунь Steel', 5500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png4.jpeg" alt="Бальзам"></div>
+            <p>Бальзам Beard</p>
+            <span class="prod-price">4200 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Бальзам Beard', 4200)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png5.jpeg" alt="Мыло"></div>
+            <p>Мыло ручной работы</p>
+            <span class="prod-price">2500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Мыло Steel', 2500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png2.jpeg" alt="Глина"></div>
+            <p>Глина для укладки</p>
+            <span class="prod-price">6000 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Глина Matte', 6000)">В корзину</button>
+        </div>
+
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png6.jpeg" alt="Помазок для бритья"></div>
+            <p>Помазок Barbarossa Classic</p>
+            <span class="prod-price">7500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Помазок Barbarossa', 7500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="11.jpeg" alt="Пудра для волос"></div>
+            <p>Пудра для объема Barbarossa</p>
+            <span class="prod-price">4800 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Пудра Barbarossa', 4800)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="7.jpeg" alt="Глина Barbarossa"></div>
+            <p>Моделирующая глина Clay</p>
+            <span class="prod-price">5800 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Глина Barbarossa Clay', 5800)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="8.jpeg" alt="Триммер для бороды"></div>
+            <p>Триммер Barber's Precision</p>
+            <span class="prod-price">24500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Триммер Precision', 24500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="9.jpeg" alt="Набор для бритья со станком"></div>
+            <p>Набор Barber's Grooming (T-станок)</p>
+            <span class="prod-price">18500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Набор Grooming T-ст', 18500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="10.jpeg" alt="Гель для бритья"></div>
+            <p>Гель для бритья Steel Beard</p>
+            <span class="prod-price">3900 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Гель Steel Beard', 3900)">В корзину</button>
+        </div>
+    </div>
+</main>
+
+<div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+        <h2 style="margin:0;">Корзина</h2>
+        <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer;">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items-container"></div>
+    <div class="cart-footer">
+        <div class="cart-total-box">
+            <span>Итого:</span>
+            <span id="cart-total-price">0 ₸</span>
+        </div>
+        <button class="btn-checkout" onclick="alert('Заявка на покупку отправлена! Мы свяжемся с вами.')">Оформить заказ</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <span class="modal-close" id="close-modal">&times;</span>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Онлайн-запись</h2>
+        <form id="booking-form">
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" placeholder="Александр" required>
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" placeholder="+7 (___) ___ __ __" required>
+            </div>
+            <div class="form-group">
+                <label>Выберите услугу</label>
+                <select required>
+                    <option value="">Выберите из списка</option>
+                    <option>Мужская стрижка</option>
+                    <option>Оформление бороды</option>
+                    <option>Стрижка + Борода</option>
+                    <option>Детская стрижка</option>
+                    <option>Бритье головы</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">ПОДТВЕРДИТЬ</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>© 2026 STEEL BEARD BARBERSHOP. <br> Алматы, пр. Назарбаева 100. Тел: +7 777 726 22 88</p>
+    </div>
+</footer>
+
+<script>
+    // ЛОГИКА КОРЗИНЫ
+    let cart = [];
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartContainer = document.getElementById('cart-items-container');
+    const cartCountLabel = document.getElementById('cart-count');
+    const totalPriceLabel = document.getElementById('cart-total-price');
+
+    function addToCart(name, price) {
+        cart.push({name, price});
+        updateUI();
+        cartDrawer.classList.add('active');
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateUI();
+    }
+
+    function updateUI() {
+        cartContainer.innerHTML = '';
+        let total = 0;
+        cart.forEach((item, i) => {
+            total += item.price;
+            cartContainer.innerHTML += `
+                <div class="cart-item">
+                    <div>
+                        <span class="cart-item-name">${item.name}</span>
+                        <span class="cart-item-price">${item.price} ₸</span>
+                    </div>
+                    <button class="btn-remove-item" onclick="removeFromCart(${i})">&times;</button>
+                </div>`;
+        });
+        cartCountLabel.innerText = cart.length;
+        totalPriceLabel.innerText = total + ' ₸';
+    }
+
+    document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
+    document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
+
+    // МОДАЛЬНОЕ ОКНО
+    const modal = document.getElementById('modal');
+    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    });
+    document.getElementById('close-modal').onclick = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
+
+    document.getElementById('booking-form').onsubmit = (e) => {
+        e.preventDefault();
+        alert('Запись успешно создана!');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+</script>
+
+</body>
+</html>

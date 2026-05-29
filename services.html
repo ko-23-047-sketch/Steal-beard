@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наши услуги — Steel Beard Barbershop</title>
+    <style>
+        :root {
+            --orange: #ff751f; 
+            --btn-orange: #f08244;
+            --dark: #1a1a1a;
+            --light-grey: #f4f4f4;
+            --table-bg: #d9d9d9;
+            --text-muted: #555;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0; padding: 0; color: #333; background-color: #fff;
+            -webkit-font-smoothing: antialiased; scroll-behavior: smooth;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* HEADER */
+        header {
+            background-color: var(--dark); color: white; padding: 15px 0;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-box { display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
+        nav a:hover { color: var(--orange); }
+        
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        .header-phone { font-weight: bold; font-size: 16px; }
+        .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+
+        /* SERVICES STYLES */
+        .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
+        
+        .services-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 60px; }
+        
+        .service-card { 
+            display: flex; background: var(--table-bg); border-radius: 35px; overflow: hidden; 
+            align-items: center; min-height: 140px; transition: 0.3s;
+        }
+        .service-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        
+        .service-img-box { width: 160px; height: 140px; min-width: 160px; background: #aaa; overflow: hidden; }
+        .service-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .service-info { flex: 1; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        
+        .service-det { display: flex; flex-direction: column; }
+        .service-title-text { font-size: 22px; font-weight: bold; color: #222; text-transform: capitalize; }
+        .time-label { font-size: 16px; color: var(--text-muted); font-weight: normal; margin-top: 4px; }
+        
+        .service-prices { display: flex; gap: 30px; }
+        .price-item { text-align: center; }
+        .price-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+        .price-val { font-size: 20px; font-weight: bold; color: var(--dark); }
+
+        .btn-online-container { text-align: right; margin-bottom: 60px; }
+        .btn-online { background-color: var(--btn-orange); color: white; padding: 25px 60px; border-radius: 35px; border: none; font-weight: bold; font-size: 24px; cursor: pointer; display: inline-block; text-transform: lowercase; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--dark); color: white; padding: 50px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); }
+        .modal-close { position: absolute; top: 25px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
+        .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
+
+        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
+
+        @media (max-width: 768px) {
+            .service-card { flex-direction: column; align-items: stretch; text-align: center; height: auto; }
+            .service-img-box { width: 100%; height: 180px; }
+            .service-info { flex-direction: column; text-align: center; padding: 20px; }
+            .service-prices { justify-content: center; width: 100%; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container nav-box">
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="staff.html">Персонал</a>
+            <a href="#" style="color: var(--orange);">Услуги</a>
+            <a href="cosmetics.html">Косметика</a>
+        </nav>
+        <div class="header-actions">
+            <span class="header-phone">+7 777 726 22 88</span>
+            <button class="btn-header open-modal">Записаться</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <h2 class="section-title">наши услуги</h2>
+    
+    <div class="services-list">
+        
+        <div class="service-card">
+            <div class="service-img-box"><img src="s1.png" alt="Мужская стрижка"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">мужская стрижка</span>
+                    <span class="time-label">/60 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">4500 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">10000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">14000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-img-box"><img src="s2.png" alt="Оформление бороды"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">оформление бороды</span>
+                    <span class="time-label">/45 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">2000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">6000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">8000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-img-box"><img src="s3.png" alt="Детская стрижка"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">детская стрижка</span>
+                    <span class="time-label">/45 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">7000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">10000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-img-box"><img src="s4.png" alt="Стрижка + Борода"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">мужская стрижка + борода</span>
+                    <span class="time-label">/90 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">5000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">13000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">18000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-img-box"><img src="s5.png" alt="Бритье лица"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">бритье лица</span>
+                    <span class="time-label">/40 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">5000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">8000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-img-box"><img src="s6.png" alt="Бритье головы"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">бритье головы</span>
+                    <span class="time-label">/45 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">6000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">9000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-img-box"><img src="s7.png" alt="Стрижка машинкой"></div>
+            <div class="service-info">
+                <div class="service-det">
+                    <span class="service-title-text">стрижка машинкой</span>
+                    <span class="time-label">/30 мин</span>
+                </div>
+                <div class="service-prices">
+                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">6000 ₸</div></div>
+                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">8000 ₸</div></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="btn-online-container">
+        <button class="btn-online open-modal">записаться онлайн</button>
+    </div>
+</main>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal-content">
+        <span class="modal-close" id="close-modal">&times;</span>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Онлайн-запись</h2>
+        <form id="booking-form">
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" placeholder="Александр" required>
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" placeholder="+7 (___) ___ __ __" required>
+            </div>
+            <div class="form-group">
+                <label>Выберите услугу</label>
+                <select required>
+                    <option value="">Выберите из списка</option>
+                    <option>Мужская стрижка</option>
+                    <option>Оформление бороды</option>
+                    <option>Стрижка + Борода</option>
+                    <option>Детская стрижка</option>
+                    <option>Бритье головы</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">ПОДТВЕРДИТЬ</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>© 2026 STEEL BEARD BARBERSHOP. <br> Алматы, пр. Назарбаева 100. Тел: +7 777 726 22 88</p>
+    </div>
+</footer>
+
+<script>
+    // МОДАЛЬНОЕ ОКНО
+    const modal = document.getElementById('modal');
+    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    });
+    document.getElementById('close-modal').onclick = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
+
+    document.getElementById('booking-form').onsubmit = (e) => {
+        e.preventDefault();
+        alert('Запись успешно создана!');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+</script>
+
+</body>
+</html>ч
