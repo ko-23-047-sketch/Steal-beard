@@ -48,13 +48,12 @@
             text-align: center;
         }
 
-        /* Контейнер скрывает черные полосы YouTube */
         .video-bg {
             position: absolute;
             top: 50%;
             left: 50%;
             width: 100vw;
-            height: 56.25vw; /* Пропорции 16:9 */
+            height: 56.25vw;
             min-height: 100vh;
             min-width: 177.77vh;
             transform: translate(-50%, -50%);
@@ -68,7 +67,6 @@
             border: none;
         }
 
-        /* Темная вуаль поверх видео для читаемости текста */
         .hero::before {
             content: '';
             position: absolute;
@@ -77,7 +75,6 @@
             z-index: 2;
         }
 
-        /* Выносим контент поверх видео */
         .hero .container {
             position: relative;
             z-index: 3;
@@ -180,7 +177,7 @@
     <div class="about-grid">
         <div class="about-text">
             <h2>O Steel Beard</h2>
-            <p>Steel Beard — это территория мужчин, где стиль закаляется, как сталь.</p>
+            <p>Steel Beard — это territory мужчин, где стиль закаляется, как сталь.</p>
             <p>Мы создали место для тех, кто ценит твердость решений, остроту линий и безупречное качество.</p>
             <p>Название «Steel Beard» символизирует наш подход к работе: острота опасной бритвы, крепость наших стандартов и долговечность вашего образа.</p>
             <p>Здесь мы превращаем уход за собой в настоящий ритуал мужской эстетики.</p>
@@ -197,13 +194,13 @@
         
         <div class="video-slider" id="videoSlider">
             <div class="video-slide">
-                <iframe src="https://www.youtube.com/embed/S_B78V_mCH0?autoplay=0&mute=1&rel=0" allow="encrypted-media" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/bEzi3V36a8w?start=53&rel=0" allow="encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="video-slide">
-                <iframe src="https://www.youtube.com/embed/fDbaorw0n60?autoplay=0&mute=1&rel=0" allow="encrypted-media" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/I43zp--AMmc?start=53&rel=0" allow="encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="video-slide">
-                <iframe src="https://www.youtube.com/embed/qR56S_Wf8tI?autoplay=0&mute=1&rel=0" allow="encrypted-media" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/VMcX_HHlZio?start=22&rel=0" allow="encrypted-media" allowfullscreen></iframe>
             </div>
         </div>
     </div>
@@ -234,7 +231,7 @@
 <div class="modal-overlay" id="modal">
     <div class="modal-content">
         <span class="modal-close" id="close-modal">&times;</span>
-        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Online-запись</h2>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Онлайн-запись</h2>
         <form id="booking-form">
             <div class="form-group">
                 <label>Ваше имя</label>
@@ -277,7 +274,6 @@
     let currentIndex = 0;
     let slideInterval;
 
-    // Динамические точки
     slides.forEach((_, index) => {
         const dot = document.createElement('div');
         dot.classList.add('slider-dot');
@@ -325,7 +321,7 @@
 
     startTimer();
 
-    // МОДАЛЬНОЕ ОКНО
+    // MODAL
     const modal = document.getElementById('modal');
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
         modal.style.display = 'flex';
