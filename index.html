@@ -68,7 +68,7 @@
             border: none;
         }
 
-        /* Темная вуаль поверх видео */
+        /* Темная вуаль поверх видео для читаемости текста */
         .hero::before {
             content: '';
             position: absolute;
@@ -106,8 +106,8 @@
         .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
         .video-slider-container { position: relative; max-width: 100%; overflow: hidden; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: #000; }
         .video-slider { display: flex; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
-        .video-slide { min-width: 100%; position: relative; padding-bottom: 56.25%; /* Пропорции 16:9 */ height: 0; overflow: hidden; }
-        .video-slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; border: none; }
+        .video-slide { min-width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .video-slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; border: none; }
         
         /* Стрелки слайдера */
         .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.6); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10; }
@@ -197,13 +197,13 @@
         
         <div class="video-slider" id="videoSlider">
             <div class="video-slide">
-                <iframe src="https://www.youtube-nocookie.com/embed/I43zp--AMmc?autoplay=1&loop=1&mute=1&playlist=I43zp--AMmc&start=50" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/S_B78V_mCH0?autoplay=0&mute=1&rel=0" allow="encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="video-slide">
-                <iframe src="https://www.youtube-nocookie.com/embed/bEzi3V36a8w?autoplay=1&loop=1&mute=1&playlist=bEzi3V36a8w&start=53" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/fDbaorw0n60?autoplay=0&mute=1&rel=0" allow="encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="video-slide">
-                <iframe src="https://www.youtube-nocookie.com/embed/VMcX_HHlZio?autoplay=1&loop=1&mute=1&playlist=VMcX_HHlZio&start=49" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/qR56S_Wf8tI?autoplay=0&mute=1&rel=0" allow="encrypted-media" allowfullscreen></iframe>
             </div>
         </div>
     </div>
@@ -234,7 +234,7 @@
 <div class="modal-overlay" id="modal">
     <div class="modal-content">
         <span class="modal-close" id="close-modal">&times;</span>
-        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Онлайн-запись</h2>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Online-запись</h2>
         <form id="booking-form">
             <div class="form-group">
                 <label>Ваше имя</label>
@@ -277,7 +277,7 @@
     let currentIndex = 0;
     let slideInterval;
 
-    // Создаем точки-индикаторы динамически
+    // Динамические точки
     slides.forEach((_, index) => {
         const dot = document.createElement('div');
         dot.classList.add('slider-dot');
@@ -312,7 +312,7 @@
     }
 
     function startTimer() {
-        slideInterval = setInterval(nextSlide, 8000); 
+        slideInterval = setInterval(nextSlide, 10000); 
     }
 
     function resetTimer() {
