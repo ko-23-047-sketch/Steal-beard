@@ -35,11 +35,54 @@
         .header-phone { font-weight: bold; font-size: 16px; }
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
 
-        /* HERO */
+        /* HERO С ВИДЕОФОНОМ */
         .hero {
-            background-color: #222; background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('bg1.png');
-            background-size: cover; background-position: center; color: white; text-align: center; padding: 140px 20px;
+            position: relative;
+            height: 80vh;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            text-align: center;
         }
+
+        /* Контейнер скрывает черные полосы YouTube */
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* Пропорции 16:9 */
+            min-height: 100vh;
+            min-width: 177.77vh;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .video-bg iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Темная вуаль поверх видео */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2;
+        }
+
+        /* Выносим контент поверх видео */
+        .hero .container {
+            position: relative;
+            z-index: 3;
+        }
+
         .hero h1 { font-family: 'Georgia', serif; font-style: italic; font-size: 56px; margin: 0 0 20px; }
         .hero p { max-width: 850px; margin: 0 auto 40px; font-size: 22px; line-height: 1.6; font-style: italic; }
 
@@ -119,6 +162,10 @@
 </header>
 
 <section class="hero">
+    <div class="video-bg">
+        <iframe src="https://www.youtube-nocookie.com/embed/S_B78V_mCH0?autoplay=1&loop=1&mute=1&playlist=S_B78V_mCH0&start=5&controls=0&showinfo=0&rel=0&iv_load_policy=3" allow="autoplay; encrypted-media"></iframe>
+    </div>
+
     <div class="container">
         <h1>Steel Beard</h1>
         <p>— это профессиональный барберинг в самом центре города. Премиальная косметика, опытные мастера и сервис, достойный джентльмена.</p>
@@ -265,7 +312,6 @@
     }
 
     function startTimer() {
-        // Каждое видео показывается 8 секунд, затем слайдер переключается дальше
         slideInterval = setInterval(nextSlide, 8000); 
     }
 
@@ -277,7 +323,6 @@
     nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
     prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
 
-    // Инициализация автопрокрутки слайдов
     startTimer();
 
     // МОДАЛЬНОЕ ОКНО
