@@ -81,6 +81,12 @@
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
+        
+        /* Блок стоимости */
+        .price-display-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .price-display-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
+        .price-display-val { font-size: 24px; font-weight: bold; color: var(--orange); }
+
         .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
@@ -88,7 +94,6 @@
         /* --- АДАПТИВНОСТЬ (MEDIA QUERIES) --- */
 
         @media (max-width: 768px) {
-            /* Мобильная навигация */
             .burger-menu { display: flex; }
             nav {
                 position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
@@ -98,11 +103,10 @@
             nav.active { left: 0; }
             nav a { margin-right: 0; font-size: 18px; }
 
-            .header-phone { display: none; } /* Скрываем для экономии места */
+            .header-phone { display: none; }
 
             .section-title { font-size: 28px; margin: 40px 0 25px; }
             
-            /* Карточка перестраивается вертикально */
             .service-card { flex-direction: column; align-items: stretch; text-align: center; height: auto; border-radius: 25px; }
             .service-img-box { width: 100%; height: 180px; }
             .service-info { flex-direction: column; text-align: center; padding: 20px; gap: 20px; }
@@ -276,15 +280,28 @@
             </div>
             <div class="form-group">
                 <label>Выберите услугу</label>
-                <select required>
+                <select id="select-service" required>
                     <option value="">Выберите из списка</option>
-                    <option>Мужская стрижка</option>
-                    <option>Оформление бороды</option>
-                    <option>Стрижка + Борода</option>
-                    <option>Детская стрижка</option>
-                    <option>Бритье головы</option>
+                    <option value="haircut">Мужская стрижка</option>
+                    <option value="beard">Оформление бороды</option>
+                    <option value="complex">Стрижка + Борода</option>
+                    <option value="kids">Детская стрижка</option>
+                    <option value="shave_face">Бритье лица</option>
+                    <option value="shave_head">Бритье головы</option>
+                    <option value="clipper">Стрижка машинкой</option>
                 </select>
             </div>
+            
+            <div class="form-group">
+                <label>Категория мастера</label>
+                <select id="select-rank" required>
+                    <option value="">Выберите квалификацию</option>
+                    <option value="trainee">Стажёр</option>
+                    <option value="barber">Барбер</option>
+                    <option value="senior">Старший барбер</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>Выберите мастера</label>
                 <select required>
@@ -297,6 +314,12 @@
                     <option>Артем (стажер)</option>
                 </select>
             </div>
+
+            <div class="price-display-box">
+                <div class="price-display-title">Стоимость услуги:</div>
+                <div class="price-display-val" id="price-output">0 ₸</div>
+            </div>
+
             <button type="submit" class="btn-submit">ПОДТВЕРДИТЬ</button>
         </form>
     </div>
@@ -329,6 +352,7 @@
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        resetPrice(); // Сбрасываем цену при открытии окна
     });
     document.getElementById('close-modal').onclick = () => {
         modal.style.display = 'none';
@@ -342,6 +366,45 @@
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     };
+
+    // --- ЛОГИКА РАСЧЕТА СТОИМОСТИ ---
+    
+    // База данных цен из вашего прайс-листа
+    const priceList = {
+        haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
+        beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
+        kids:       { trainee: 3000,  barber: 7000,  senior: 10000 },
+        complex:    { trainee: 5000,  barber: 13000, senior: 18000 },
+        shave_face: { trainee: 3000,  barber: 5000,  senior: 8000  },
+        shave_head: { trainee: 3000,  barber: 6000,  senior: 9000  },
+        clipper:    { trainee: 3000,  barber: 6000,  senior: 8000  }
+    };
+
+    const selectService = document.getElementById('select-service');
+    const selectRank = document.getElementById('select-rank');
+    const priceOutput = document.getElementById('price-output');
+
+    function updatePrice() {
+        const service = selectService.value;
+        const rank = selectRank.value;
+
+        // Если выбраны и услуга, и ранг мастера — выводим цену
+        if (service && rank) {
+            const price = priceList[service][rank];
+            priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
+        } else {
+            priceOutput.textContent = '0 ₸';
+        }
+    }
+
+    function resetPrice() {
+        document.getElementById('booking-form').reset();
+        priceOutput.textContent = '0 ₸';
+    }
+
+    // Слушаем изменения в выпадающих списках услуги и ранга
+    selectService.addEventListener('change', updatePrice);
+    selectRank.addEventListener('change', updatePrice);
 </script>
 
 </body>
