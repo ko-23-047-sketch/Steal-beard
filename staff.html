@@ -46,11 +46,9 @@
         .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
         .staff-subtitle { font-size: 22px; color: var(--dark); margin: 30px 0 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Изменили адаптивную логику сетки, чтобы на маленьких экранах она не ломалась */
         .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 50px; }
         .staff-card { text-align: center; background: var(--light-grey); padding: 25px; border-radius: 35px; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; box-sizing: border-box; }
         
-        /* Эффект ховера убираем на тач-устройствах через медиа-запрос во избежание двойного тапа */
         @media (hover: hover) {
             .staff-card:hover { transform: translateY(-10px); }
         }
@@ -68,14 +66,18 @@
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
+        
+        /* Блок стоимости */
+        .price-display-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .price-display-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
+        .price-display-val { font-size: 24px; font-weight: bold; color: var(--orange); }
+
         .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px; }
 
-        /* --- АДАПТИВНОСТЬ (MEDIA QUERIES) --- */
-
+        /* --- АДАПТИВНОСТЬ --- */
         @media (max-width: 768px) {
-            /* Мобильная навигация */
             .burger-menu { display: flex; }
             nav {
                 position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
@@ -85,19 +87,17 @@
             nav.active { left: 0; }
             nav a { margin-right: 0; font-size: 18px; }
 
-            .header-phone { display: none; } /* Скрываем для экономии места */
-
+            .header-phone { display: none; }
             .section-title { font-size: 28px; margin: 40px 0 25px; }
             .staff-subtitle { font-size: 18px; margin: 25px 0 15px; }
             
-            /* Сетка перестраивается на центрированные карточки */
             .staff-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
             .staff-img-box { height: 300px; }
         }
 
         @media (max-width: 480px) {
             .section-title { font-size: 24px; }
-            .staff-grid { grid-template-columns: 1fr; } /* На совсем маленьких экранах в 1 ряд */
+            .staff-grid { grid-template-columns: 1fr; }
             .modal-content { padding: 30px 20px; }
             .btn-header { padding: 8px 15px; font-size: 13px; }
         }
@@ -206,27 +206,40 @@
             </div>
             <div class="form-group">
                 <label>Выберите услугу</label>
-                <select required>
+                <select id="select-service" required>
                     <option value="">Выберите из списка</option>
-                    <option>Мужская стрижка</option>
-                    <option>Оформление бороды</option>
-                    <option>Стрижка + Борода</option>
-                    <option>Детская стрижка</option>
-                    <option>Бритье головы</option>
+                    <option value="haircut">Мужская стрижка</option>
+                    <option value="beard">Оформление бороды</option>
+                    <option value="complex">Стрижка + Борода</option>
+                    <option value="kids">Детская стрижка</option>
+                    <option value="shave_face">Бритье лица</option>
+                    <option value="shave_head">Бритье головы</option>
+                    <option value="clipper">Стрижка машинкой</option>
                 </select>
             </div>
+            
+            <div class="form-group">
+                <label>Категория мастера</label>
+                <select id="select-rank" required>
+                    <option value="">Выберите квалификацию</option>
+                    <option value="trainee">Стажёр</option>
+                    <option value="barber">Барбер</option>
+                    <option value="senior">Старший барбер</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>Выберите мастера</label>
-                <select required>
-                    <option value="">Любой свободный мастер</option>
-                    <option>Александр (старший барбер)</option>
-                    <option>Игорь (старший барбер)</option>
-                    <option>Максим (старший барбер)</option>
-                    <option>Дмитрий (барбер)</option>
-                    <option>Кирилл (барбер)</option>
-                    <option>Артем (стажер)</option>
+                <select id="select-master" required>
+                    <option value="">Сначала выберите категорию</option>
                 </select>
             </div>
+
+            <div class="price-display-box">
+                <div class="price-display-title">Стоимость услуги:</div>
+                <div class="price-display-val" id="price-output">0 ₸</div>
+            </div>
+
             <button type="submit" class="btn-submit">ПОДТВЕРДИТЬ</button>
         </form>
     </div>
@@ -259,6 +272,7 @@
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+        resetPrice();
     });
     document.getElementById('close-modal').onclick = () => {
         modal.style.display = 'none';
@@ -272,6 +286,83 @@
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     };
+
+    // --- СВЯЗАННЫЕ СПИСКИ И ЦЕНЫ ---
+    const priceList = {
+        haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
+        beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
+        kids:       { trainee: 3000,  barber: 7000,  senior: 10000 },
+        complex:    { trainee: 5000,  barber: 13000, senior: 18000 },
+        shave_face: { trainee: 3000,  barber: 5000,  senior: 8000  },
+        shave_head: { trainee: 3000,  barber: 6000,  senior: 9000  },
+        clipper:    { trainee: 3000,  barber: 6000,  senior: 8000  }
+    };
+
+    const mastersByRank = {
+        trainee: [
+            { name: "Любой свободный стажёр" },
+            { name: "Артем (стажер)" }
+        ],
+        barber: [
+            { name: "Любой свободный барбер" },
+            { name: "Дмитрий (барбер)" },
+            { name: "Кирилл (барбер)" }
+        ],
+        senior: [
+            { name: "Любой свободный старший барбер" },
+            { name: "Александр (старший барбер)" },
+            { name: "Игорь (старший барбер)" },
+            { name: "Максим (старший барбер)" }
+        ]
+    };
+
+    const selectService = document.getElementById('select-service');
+    const selectRank = document.getElementById('select-rank');
+    const selectMaster = document.getElementById('select-master');
+    const priceOutput = document.getElementById('price-output');
+
+    function updateMastersList() {
+        const rank = selectRank.value;
+        selectMaster.innerHTML = '';
+
+        if (!rank) {
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Сначала выберите категорию';
+            selectMaster.appendChild(defaultOption);
+            return;
+        }
+
+        mastersByRank[rank].forEach(master => {
+            const option = document.createElement('option');
+            option.textContent = master.name;
+            selectMaster.appendChild(option);
+        });
+    }
+
+    function updatePrice() {
+        const service = selectService.value;
+        const rank = selectRank.value;
+
+        if (service && rank) {
+            const price = priceList[service][rank];
+            priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
+        } else {
+            priceOutput.textContent = '0 ₸';
+        }
+    }
+
+    function resetPrice() {
+        document.getElementById('booking-form').reset();
+        updateMastersList();
+        priceOutput.textContent = '0 ₸';
+    }
+
+    selectRank.addEventListener('change', () => {
+        updateMastersList();
+        updatePrice();
+    });
+    selectService.addEventListener('change', updatePrice);
 </script>
 
 </body>
