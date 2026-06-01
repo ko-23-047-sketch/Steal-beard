@@ -20,7 +20,7 @@
             -webkit-font-smoothing: antialiased; scroll-behavior: smooth;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
 
         /* HEADER */
         header {
@@ -28,12 +28,19 @@
             position: sticky; top: 0; z-index: 1000;
         }
         .nav-box { display: flex; justify-content: space-between; align-items: center; }
+        
+        nav { display: flex; }
         nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
-        nav a:hover { color: var(--orange); }
+        nav a:hover, nav a.active { color: var(--orange); }
         
         .header-actions { display: flex; align-items: center; gap: 20px; }
-        .header-phone { font-weight: bold; font-size: 16px; }
-        .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
+        .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
+        .btn-header:hover { background-color: var(--btn-orange); }
+
+        /* Бургер-меню для мобилок */
+        .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
+        .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
 
         /* SERVICES STYLES */
         .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
@@ -42,14 +49,17 @@
         
         .service-card { 
             display: flex; background: var(--table-bg); border-radius: 35px; overflow: hidden; 
-            align-items: center; min-height: 140px; transition: 0.3s;
+            align-items: center; min-height: 140px; transition: 0.3s; box-sizing: border-box;
         }
-        .service-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        
+        @media (hover: hover) {
+            .service-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        }
         
         .service-img-box { width: 160px; height: 140px; min-width: 160px; background: #aaa; overflow: hidden; }
         .service-img-box img { width: 100%; height: 100%; object-fit: cover; }
         
-        .service-info { flex: 1; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .service-info { flex: 1; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-sizing: border-box; }
         
         .service-det { display: flex; flex-direction: column; }
         .service-title-text { font-size: 22px; font-weight: bold; color: #222; text-transform: capitalize; }
@@ -58,15 +68,16 @@
         .service-prices { display: flex; gap: 30px; }
         .price-item { text-align: center; }
         .price-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
-        .price-val { font-size: 20px; font-weight: bold; color: var(--dark); }
+        .price-val { font-size: 20px; font-weight: bold; color: var(--dark); white-space: nowrap; }
 
         .btn-online-container { text-align: right; margin-bottom: 60px; }
-        .btn-online { background-color: var(--btn-orange); color: white; padding: 25px 60px; border-radius: 35px; border: none; font-weight: bold; font-size: 24px; cursor: pointer; display: inline-block; text-transform: lowercase; }
+        .btn-online { background-color: var(--btn-orange); color: white; padding: 20px 50px; border-radius: 35px; border: none; font-weight: bold; font-size: 22px; cursor: pointer; display: inline-block; text-transform: lowercase; transition: background-color 0.3s; }
+        .btn-online:hover { background-color: var(--orange); }
 
         /* MODAL */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--dark); color: white; padding: 50px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); }
-        .modal-close { position: absolute; top: 25px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
+        .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; }
+        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
@@ -74,11 +85,40 @@
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
 
+        /* --- АДАПТИВНОСТЬ (MEDIA QUERIES) --- */
+
         @media (max-width: 768px) {
-            .service-card { flex-direction: column; align-items: stretch; text-align: center; height: auto; }
+            /* Мобильная навигация */
+            .burger-menu { display: flex; }
+            nav {
+                position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
+                background-color: var(--dark); flex-direction: column; align-items: center;
+                padding-top: 40px; gap: 25px; transition: 0.4s ease; z-index: 999;
+            }
+            nav.active { left: 0; }
+            nav a { margin-right: 0; font-size: 18px; }
+
+            .header-phone { display: none; } /* Скрываем для экономии места */
+
+            .section-title { font-size: 28px; margin: 40px 0 25px; }
+            
+            /* Карточка перестраивается вертикально */
+            .service-card { flex-direction: column; align-items: stretch; text-align: center; height: auto; border-radius: 25px; }
             .service-img-box { width: 100%; height: 180px; }
-            .service-info { flex-direction: column; text-align: center; padding: 20px; }
-            .service-prices { justify-content: center; width: 100%; gap: 15px; }
+            .service-info { flex-direction: column; text-align: center; padding: 20px; gap: 20px; }
+            .service-prices { justify-content: space-around; width: 100%; gap: 10px; }
+            
+            .btn-online-container { text-align: center; }
+            .btn-online { width: 100%; box-sizing: border-box; padding: 18px 30px; font-size: 18px; }
+        }
+
+        @media (max-width: 480px) {
+            .section-title { font-size: 24px; }
+            .service-title-text { font-size: 18px; }
+            .price-val { font-size: 16px; }
+            .price-cat { font-size: 10px; }
+            .modal-content { padding: 30px 20px; }
+            .btn-header { padding: 8px 15px; font-size: 13px; }
         }
     </style>
 </head>
@@ -86,10 +126,15 @@
 
 <header>
     <div class="container nav-box">
-        <nav>
+        <button class="burger-menu" id="burgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav id="navMenu">
             <a href="index.html">Главная</a>
             <a href="staff.html">Персонал</a>
-            <a href="#" style="color: var(--orange);">Услуги</a>
+            <a href="#" class="active">Услуги</a>
             <a href="cosmetics.html">Косметика</a>
         </nav>
         <div class="header-actions">
@@ -252,6 +297,21 @@
 </footer>
 
 <script>
+    // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
+    const burgerBtn = document.getElementById('burgerBtn');
+    const navMenu = document.getElementById('navMenu');
+
+    burgerBtn.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        burgerBtn.classList.toggle('open');
+    });
+
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+        });
+    });
+
     // МОДАЛЬНОЕ ОКНО
     const modal = document.getElementById('modal');
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
@@ -273,4 +333,4 @@
 </script>
 
 </body>
-</html>ч
+</html>
