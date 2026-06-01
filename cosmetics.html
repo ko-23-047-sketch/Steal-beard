@@ -20,7 +20,7 @@
             -webkit-font-smoothing: antialiased; scroll-behavior: smooth;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
 
         /* HEADER */
         header {
@@ -28,28 +28,42 @@
             position: sticky; top: 0; z-index: 1000;
         }
         .nav-box { display: flex; justify-content: space-between; align-items: center; }
+        
+        nav { display: flex; }
         nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
-        nav a:hover { color: var(--orange); }
+        nav a:hover, nav a.active { color: var(--orange); }
         
         .header-actions { display: flex; align-items: center; gap: 20px; }
-        .cart-icon-btn { background: none; border: none; color: white; cursor: pointer; position: relative; font-size: 24px; }
+        .cart-icon-btn { background: none; border: none; color: white; cursor: pointer; position: relative; font-size: 24px; padding: 5px; display: flex; align-items: center; }
         .cart-count { 
-            position: absolute; top: -8px; right: -10px; background: var(--orange); 
-            color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; font-weight: bold;
+            position: absolute; top: -5px; right: -8px; background: var(--orange); 
+            color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold;
         }
-        .header-phone { font-weight: bold; font-size: 16px; }
-        .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
+        .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
+        .btn-header:hover { background-color: var(--btn-orange); }
+
+        /* Бургер-меню для мобилок */
+        .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
+        .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
 
         /* COSMETICS GRID */
         .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
-        .cosm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin: 40px 0; }
-        .prod-card { background: var(--light-grey); padding: 30px; border-radius: 30px; text-align: center; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
-        .prod-card:hover { transform: translateY(-10px); }
-        .prod-img-box { height: 220px; background: white; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        
+        /* Исправили автоматическую сетку, чтобы карточки не сжимались критически */
+        .cosm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin: 40px 0; }
+        .prod-card { background: var(--light-grey); padding: 25px; border-radius: 30px; text-align: center; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
+        
+        @media (hover: hover) {
+            .prod-card:hover { transform: translateY(-10px); }
+        }
+        
+        .prod-img-box { height: 220px; background: white; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box; }
         .prod-img-box img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; }
-        .prod-card p { font-weight: bold; font-size: 16px; margin: 10px 0; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        .prod-card p { font-weight: bold; font-size: 16px; margin: 10px 0; min-height: 40px; display: flex; align-items: center; justify-content: center; color: var(--dark); }
         .prod-price { color: var(--orange); font-weight: bold; font-size: 20px; display: block; margin-bottom: 15px; }
-        .btn-add-cart { background: var(--orange); color: white; border: none; width: 100%; padding: 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: auto; }
+        .btn-add-cart { background: var(--orange); color: white; border: none; width: 100%; padding: 14px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: auto; transition: background-color 0.2s; }
+        .btn-add-cart:hover { background-color: var(--btn-orange); }
 
         /* CART DRAWER */
         .cart-drawer {
@@ -60,46 +74,29 @@
         .cart-drawer.active { right: 0; }
         .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--orange); padding-bottom: 20px; margin-bottom: 20px; }
         .cart-items { flex: 1; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
-        .cart-item-name { font-weight: bold; font-size: 16px; margin-bottom: 5px; display: block; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; gap: 10px; }
+        .cart-item-name { font-weight: bold; font-size: 15px; margin-bottom: 5px; display: block; color: var(--dark); }
         .cart-item-price { color: var(--orange); font-weight: bold; }
         
-        /* НОВЫЕ СТИЛИ ДЛЯ КНОПОК УПРАВЛЕНИЯ КОЛИЧЕСТВОМ */
         .cart-quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f4f4f4;
-            padding: 5px 10px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            display: flex; align-items: center; gap: 10px; background: #f4f4f4; padding: 5px 10px; border-radius: 8px; border: 1px solid #e0e0e0;
         }
         .cart-btn-qty {
-            background: transparent;
-            color: var(--dark);
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
+            background: transparent; color: var(--dark); border: none; font-size: 16px; font-weight: bold; cursor: pointer; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;
         }
         .cart-btn-qty:hover { color: var(--orange); }
         .cart-qty-num { font-weight: bold; font-size: 14px; min-width: 15px; text-align: center; color: var(--dark); }
 
-        .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 10px; }
+        .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 5px; }
         .cart-footer { padding-top: 25px; border-top: 1px solid #eee; }
-        .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; }
-        .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; }
+        .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
+        .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; transition: background-color 0.2s; }
+        .btn-checkout:hover { background-color: var(--btn-orange); }
 
         /* MODAL */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--dark); color: white; padding: 50px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); }
-        .modal-close { position: absolute; top: 25px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
+        .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; }
+        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
@@ -107,8 +104,37 @@
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
 
-        @media (max-width: 992px) {
-            .cart-drawer { width: 100%; right: -100%; }
+        /* --- АДАПТИВНОСТЬ (MEDIA QUERIES) --- */
+
+        @media (max-width: 768px) {
+            /* Мобильная навигация */
+            .burger-menu { display: flex; }
+            nav {
+                position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
+                background-color: var(--dark); flex-direction: column; align-items: center;
+                padding-top: 40px; gap: 25px; transition: 0.4s ease; z-index: 999;
+            }
+            nav.active { left: 0; }
+            nav a { margin-right: 0; font-size: 18px; }
+
+            .header-phone { display: none; } /* Скрываем для экономии пространства */
+            
+            .section-title { font-size: 28px; margin: 40px 0 25px; }
+
+            /* Корзина во весь экран на смартфонах */
+            .cart-drawer { width: 100%; right: -100%; padding: 25px; }
+            
+            .cosm-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+            .prod-card { padding: 15px; border-radius: 20px; }
+            .prod-img-box { height: 180px; }
+        }
+
+        @media (max-width: 480px) {
+            .cosm-grid { grid-template-columns: 1fr; } /* В один ряд на маленьких экранах */
+            .modal-content { padding: 30px 20px; }
+            .btn-header { padding: 8px 15px; font-size: 13px; }
+            .cart-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .cart-item > div:last-child { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
@@ -116,11 +142,16 @@
 
 <header>
     <div class="container nav-box">
-        <nav>
+        <button class="burger-menu" id="burgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav id="navMenu">
             <a href="index.html">Главная</a>
             <a href="staff.html">Персонал</a>
             <a href="services.html">Услуги</a>
-            <a href="#" style="color: var(--orange);">Косметика</a>
+            <a href="#" class="active">Косметика</a>
         </nav>
         <div class="header-actions">
             <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
@@ -199,8 +230,8 @@
 
 <div class="cart-drawer" id="cart-drawer">
     <div class="cart-header">
-        <h2 style="margin:0;">Корзина</h2>
-        <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer;">&times;</button>
+        <h2 style="margin:0; color: var(--dark);">Корзина</h2>
+        <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer; color: var(--dark);">&times;</button>
     </div>
     <div class="cart-items" id="cart-items-container"></div>
     <div class="cart-footer">
@@ -248,7 +279,22 @@
 </footer>
 
 <script>
-    // ОБНОВЛЕННАЯ УМНАЯ ЛОГИКА КОРЗИНЫ
+    // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
+    const burgerBtn = document.getElementById('burgerBtn');
+    const navMenu = document.getElementById('navMenu');
+
+    burgerBtn.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        burgerBtn.classList.toggle('open');
+    });
+
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('remove');
+        });
+    });
+
+    // УМНАЯ ЛОГИКА КОРЗИНЫ
     let cart = [];
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
@@ -256,17 +302,12 @@
     const totalPriceLabel = document.getElementById('cart-total-price');
 
     function addToCart(name, price) {
-        // Проверяем, есть ли уже товар с таким именем в корзине
         const existingItem = cart.find(item => item.name === name);
-
         if (existingItem) {
-            // Если есть — увеличиваем количество
             existingItem.quantity += 1;
         } else {
-            // Если нет — добавляем объект с количеством 1
             cart.push({ name, price, quantity: 1 });
         }
-
         updateUI();
         cartDrawer.classList.add('active');
     }
@@ -279,7 +320,6 @@
             item.quantity += 1;
         } else if (action === 'decrease') {
             item.quantity -= 1;
-            // Если количество упало до 0 — убираем товар
             if (item.quantity <= 0) {
                 cart = cart.filter(item => item.name !== name);
             }
@@ -326,7 +366,6 @@
                 </div>`;
         });
 
-        // В иконке корзины выводим общее число штук товаров
         cartCountLabel.innerText = totalItemsCount;
         totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
     }
