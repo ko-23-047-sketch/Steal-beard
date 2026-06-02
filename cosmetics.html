@@ -241,7 +241,7 @@
             <span>Итого:</span>
             <span id="cart-total-price">0 ₸</span>
         </div>
-        <button class="btn-checkout" onclick="alert('Заявка на покупку отправлена! Мы свяжемся с вами.')">Оформить заказ</button>
+        <button class="btn-checkout" id="checkout-btn">Оформить заказ</button>
     </div>
 </div>
 
@@ -283,7 +283,7 @@
             </div>
             
             <div class="form-group">
-                <label>Выберите мастера</label>
+                <label>Выберите мастерa</label>
                 <select id="select-master" required>
                     <option value="">Сначала выберите категорию</option>
                 </select>
@@ -305,7 +305,27 @@
     </div>
 </footer>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+    // Конфигурация Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
+        authDomain: "diplom-f94fb.firebaseapp.com",
+        projectId: "diplom-f94fb",
+        storageBucket: "diplom-f94fb.firebasestorage.app",
+        messagingSenderId: "318059526136",
+        appId: "1:318059526136:web:1767749fb5255bf80d080d",
+        measurementId: "G-139BDNRX6Q"
+    };
+
+    // Инициализация сервисов
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
     // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
     const burgerBtn = document.getElementById('burgerBtn');
     const navMenu = document.getElementById('navMenu');
@@ -321,7 +341,7 @@
         });
     });
 
-    // УМНАЯ ЛОГИКА КОРЗИНЫ
+    // ЛОГИКА КОРЗИНЫ
     let cart = [];
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
@@ -358,6 +378,11 @@
         cart = cart.filter(item => item.name !== name);
         updateUI();
     }
+
+    // Прокидываем функции в window, чтобы onclick в разметке HTML продолжал работать внутри module-скрипта
+    window.addToCart = addToCart;
+    window.changeQuantity = changeQuantity;
+    window.removeFromCart = removeFromCart;
 
     function updateUI() {
         cartContainer.innerHTML = '';
@@ -413,14 +438,67 @@
     };
     window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
 
-    document.getElementById('booking-form').onsubmit = (e) => {
+    // ИНТЕГРАЦИЯ ФОРМЫ С FIREBASE (ОНЛАЙН-ЗАПИСЬ)
+    document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
-        alert('Запись успешно создана!');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+        
+        const bookingData = {
+            name: e.target.querySelector('input[type="text"]').value,
+            phone: e.target.querySelector('input[type="tel"]').value,
+            service: document.getElementById('select-service').value,
+            rank: document.getElementById('select-rank').value,
+            master: document.getElementById('select-master').value,
+            price: document.getElementById('price-output').textContent,
+            createdAt: serverTimestamp()
+        };
+
+        try {
+            // Сохраняем в коллекцию 'bookings'
+            await addDoc(collection(db, 'bookings'), bookingData);
+            alert('Запись успешно создана! Данные отправлены в систему.');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetPrice();
+        } catch (error) {
+            console.error("Ошибка при записи: ", error);
+            alert('Произошла ошибка при отправке записи. Проверьте правила базы данных.');
+        }
     };
 
-    // --- ЛОГИКА СВЯЗАННЫХ СПИСКОВ И ЦЕН ДЛЯ ОНЛАЙН-ЗАПИСИ ---
+    // ИНТЕГРАЦИЯ КОРЗИНЫ С FIREBASE (ПОКУПКА)
+    document.getElementById('checkout-btn').onclick = async () => {
+        if (cart.length === 0) {
+            alert('Ваша корзина пуста!');
+            return;
+        }
+
+        const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
+        if (!phoneNumber) {
+            alert("Оформление заказа отменено.");
+            return;
+        }
+
+        const orderData = {
+            phone: phoneNumber,
+            items: cart,
+            totalPrice: totalPriceLabel.innerText,
+            createdAt: serverTimestamp()
+        };
+
+        try {
+            // Сохраняем в коллекцию 'orders'
+            await addDoc(collection(db, 'orders'), orderData);
+            alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
+            cart = [];
+            updateUI();
+            cartDrawer.classList.remove('active');
+        } catch (error) {
+            console.error("Ошибка при оформлении заказа: ", error);
+            alert('Не удалось отправить заказ. Попробуйте еще раз.');
+        }
+    };
+
+    // ЛОГИКА СВЯЗАННЫХ СПИСКОВ И ЦЕН
     const priceList = {
         haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
         beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
