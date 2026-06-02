@@ -29,7 +29,7 @@
         }
         .nav-box { display: flex; justify-content: space-between; align-items: center; }
         
-        nav { display: flex; }
+        nav { display: flex; align-items: center; }
         nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
         nav a:hover, nav a.active { color: var(--orange); }
         
@@ -37,6 +37,11 @@
         .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
         .btn-header:hover { background-color: var(--btn-orange); }
+
+        /* Корзина в шапке */
+        .cart-icon-container { position: relative; display: flex; align-items: center; text-decoration: none; color: white; margin-right: 15px; }
+        .cart-icon-container:hover { color: var(--orange); }
+        .cart-count { position: absolute; top: -8px; right: -12px; background-color: var(--orange); color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
 
         /* Бургер-меню для мобилок */
         .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
@@ -77,6 +82,7 @@
         .price-display-val { font-size: 24px; font-weight: bold; color: var(--orange); }
 
         .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
+        .btn-submit:disabled { background: #555; cursor: not-allowed; }
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px; }
 
@@ -123,6 +129,10 @@
             <a href="cosmetics.html">Косметика</a>
         </nav>
         <div class="header-actions">
+            <a href="cart.html" class="cart-icon-container">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
             <span class="header-phone">+7 777 726 22 88</span>
             <button class="btn-header open-modal">Записаться</button>
         </div>
@@ -211,11 +221,11 @@
         <form id="booking-form">
             <div class="form-group">
                 <label>Ваше имя</label>
-                <input type="text" placeholder="Александр" required>
+                <input type="text" id="client-name" placeholder="Александр" required>
             </div>
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="tel" placeholder="+7 (___) ___ __ __" required>
+                <input type="tel" id="client-phone" placeholder="+7 (777) 777 77 77" required>
             </div>
             <div class="form-group">
                 <label>Выберите услугу</label>
@@ -253,7 +263,7 @@
                 <div class="price-display-val" id="price-output">0 ₸</div>
             </div>
 
-            <button type="submit" class="btn-submit">ПОДТВЕРДИТЬ</button>
+            <button type="submit" class="btn-submit" id="submitBtn">ПОДТВЕРДИТЬ</button>
         </form>
     </div>
 </div>
@@ -264,7 +274,27 @@
     </div>
 </footer>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // ⚠️ Вставьте сюда конфиг вашего Firebase проекта, как в прошлых файлах
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Переменная для хранения текущей цены текстом
+    let currentPriceValue = 0;
+
     // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
     const burgerBtn = document.getElementById('burgerBtn');
     const navMenu = document.getElementById('navMenu');
@@ -280,6 +310,17 @@
         });
     });
 
+    // --- ФУНКЦИОНАЛ КОРЗИНЫ (ОБНОВЛЕНИЕ СЧЕТЧИКА) ---
+    function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        document.getElementById('cartCount').textContent = totalCount;
+    }
+    // Вызываем при загрузке страницы
+    updateCartBadge();
+    // Слушаем изменения из других вкладок (например, со страницы косметики)
+    window.addEventListener('storage', updateCartBadge);
+
     // --- СВЯЗАННЫЕ СПИСКИ И ЦЕНЫ ---
     const priceList = {
         haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
@@ -289,6 +330,16 @@
         shave_face: { trainee: 3000,  barber: 5000,  senior: 8000  },
         shave_head: { trainee: 3000,  barber: 6000,  senior: 9000  },
         clipper:    { trainee: 3000,  barber: 6000,  senior: 8000  }
+    };
+
+    const serviceNamesRu = {
+        haircut: "Мужская стрижка",
+        beard: "Оформление бороды",
+        complex: "Стрижка + Борода",
+        kids: "Детская стрижка",
+        shave_face: "Бритье лица",
+        shave_head: "Бритье головы",
+        clipper: "Стрижка машинкой"
     };
 
     const mastersByRank = {
@@ -314,6 +365,7 @@
     const selectRank = document.getElementById('select-rank');
     const selectMaster = document.getElementById('select-master');
     const priceOutput = document.getElementById('price-output');
+    const submitBtn = document.getElementById('submitBtn');
 
     // МОДАЛЬНОЕ ОКНО И АВТОПОДСТАНОВКА МАСТЕРА
     document.querySelectorAll('.open-modal').forEach(button => {
@@ -321,22 +373,16 @@
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
-            // Сбрасываем форму по умолчанию
             document.getElementById('booking-form').reset();
             
-            // Проверяем, нажата ли кнопка конкретного мастера
             const targetRank = e.currentTarget.getAttribute('data-rank');
             const targetMaster = e.currentTarget.getAttribute('data-master');
             
             if (targetRank && targetMaster) {
-                // Устанавливаем категорию (ранг)
                 selectRank.value = targetRank;
-                // Перегенерируем список мастеров под этот ранг
                 updateMastersList();
-                // Выбираем конкретного мастера
                 selectMaster.value = targetMaster;
             } else {
-                // Если кликнули общую кнопку — просто очищаем списки
                 updateMastersList();
             }
             
@@ -355,13 +401,6 @@
             document.body.style.overflow = 'auto'; 
         } 
     }
-
-    document.getElementById('booking-form').onsubmit = (e) => {
-        e.preventDefault();
-        alert('Запись успешно создана!');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    };
 
     function updateMastersList() {
         const rank = selectRank.value;
@@ -389,8 +428,10 @@
 
         if (service && rank) {
             const price = priceList[service][rank];
+            currentPriceValue = price;
             priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
         } else {
+            currentPriceValue = 0;
             priceOutput.textContent = '0 ₸';
         }
     }
@@ -400,6 +441,50 @@
         updatePrice();
     });
     selectService.addEventListener('change', updatePrice);
+
+
+    // --- ОТПРАВКА ДАННЫХ В FIREBASE FIRESTORE ---
+    document.getElementById('booking-form').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        // Блокируем кнопку на время отправки
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'ОТПРАВКА...';
+
+        const name = document.getElementById('client-name').value;
+        const phone = document.getElementById('client-phone').value;
+        const serviceCode = selectService.value;
+        const serviceName = serviceNamesRu[serviceCode] || serviceCode;
+        const rank = selectRank.options[selectRank.selectedIndex].text;
+        const master = selectMaster.value;
+
+        try {
+            // Сохраняем бронирование в коллекцию "appointments"
+            await addDoc(collection(db, "appointments"), {
+                clientName: name,
+                clientPhone: phone,
+                service: serviceName,
+                masterRank: rank,
+                masterName: master,
+                price: currentPriceValue,
+                createdAt: new Date().toISOString()
+            });
+
+            alert('Запись успешно создана и сохранена!');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('booking-form').reset();
+            updatePrice();
+
+        } catch (error) {
+            console.error("Ошибка при сохранении в Firebase: ", error);
+            alert('Произошла ошибка при отправке данных. Пожалуйста, попробуйте позже.');
+        } finally {
+            // Разблокируем кнопку обратно
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'ПОДТВЕРДИТЬ';
+        }
+    };
 </script>
 
 </body>
