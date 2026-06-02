@@ -47,7 +47,7 @@
         .staff-subtitle { font-size: 22px; color: var(--dark); margin: 30px 0 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
         
         .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 50px; }
-        .staff-card { text-align: center; background: var(--light-grey); padding: 25px; border-radius: 35px; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; box-sizing: border-box; }
+        .staff-card { text-align: center; background: var(--light-grey); padding: 25px; border-radius: 35px; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; box-sizing: border-box; justify-content: space-between; }
         
         @media (hover: hover) {
             .staff-card:hover { transform: translateY(-10px); }
@@ -57,7 +57,11 @@
         .staff-img-box img { width: 100%; height: 100%; object-fit: cover; }
         .staff-card h3 { font-size: 24px; margin: 10px 0 5px; color: var(--dark); }
         .staff-card .role { color: var(--orange); font-weight: bold; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; margin: 0 0 8px 0; }
-        .staff-card .experience { font-size: 15px; color: #666; font-style: italic; margin: 0; }
+        .staff-card .experience { font-size: 15px; color: #666; font-style: italic; margin: 0 0 15px 0; flex-grow: 1; }
+        
+        /* Кнопка записи внутри карточки */
+        .btn-staff-book { background-color: transparent; color: var(--dark); border: 2px solid var(--orange); padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.3s; width: 100%; margin-top: auto; text-transform: uppercase; }
+        .btn-staff-book:hover { background-color: var(--orange); color: white; }
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
@@ -135,18 +139,21 @@
             <h3>Владимир</h3>
             <p class="role">Директор / Основатель компании</p>
             <p class="experience">Управляет брендом с первого дня основания</p>
+            <button class="btn-staff-book open-modal">Онлайн-запись</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="manager.jpeg" alt="Елена"></div>
             <h3>Елена</h3>
             <p class="role">Старший менеджер</p>
             <p class="experience">Опыт в сервисе и администрировании — 4 года</p>
+            <button class="btn-staff-book open-modal">Онлайн-запись</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="barbe2.jpeg" alt="Дарья"></div>
             <h3>Дарья</h3>
             <p class="role">Менеджер по работе с клиентами</p>
             <p class="experience">Специалист по гостеприимству. Опыт — 5 лет.</p>
+            <button class="btn-staff-book open-modal">Онлайн-запись</button>
         </div>
     </div>
 
@@ -157,36 +164,42 @@
             <h3>Александр</h3>
             <p class="role">Старший барбер</p>
             <p class="experience">Опыт работы: более 7 лет. Эксперт по сложным стрижкам.</p>
+            <button class="btn-staff-book open-modal" data-rank="senior" data-master="Александр (старший барбер)">Записаться к мастеру</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="barber-igor.jpeg" alt="Игорь"></div> 
             <h3>Игорь</h3>
             <p class="role">Старший барбер</p>
             <p class="experience">Стаж — 10 лет. Победитель региональных конкурсов.</p>
+            <button class="btn-staff-book open-modal" data-rank="senior" data-master="Игорь (старший барбер)">Записаться к мастеру</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="barber-maxim.jpeg" alt="Максим"></div> 
             <h3>Максим</h3>
             <p class="role">Старший барбер</p>
             <p class="experience">8 лет в индустрии. Master королевского бритья.</p>
+            <button class="btn-staff-book open-modal" data-rank="senior" data-master="Максим (старший барбер)">Записаться к мастеру</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="barber-dmitry.jpeg" alt="Дмитрий"></div>
             <h3>Дмитрий</h3>
             <p class="role">Барбер</p>
             <p class="experience">Опыт работы: 3 года. Мастер классического бритья.</p>
+            <button class="btn-staff-book open-modal" data-rank="barber" data-master="Дмитрий (барбер)">Записаться к мастеру</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="barber-kirill.jpeg" alt="Кирилл"></div>
             <h3>Кирилл</h3>
             <p class="role">Барбер</p>
             <p class="experience">Опыт работы: 4 года. Изменение имиджа, стильные стрижки без бороды.</p>
+            <button class="btn-staff-book open-modal" data-rank="barber" data-master="Кирилл (барбер)">Записаться к мастеру</button>
         </div>
         <div class="staff-card">
             <div class="staff-img-box"><img src="barber-artem.jpeg" alt="Артем"></div>
             <h3>Артем</h3>
             <p class="role">Стажер</p>
             <p class="experience">Опыт работы: 6 месяцев. Прошел авторский курс академии.</p>
+            <button class="btn-staff-book open-modal" data-rank="trainee" data-master="Артем (стажер)">Записаться к мастеру</button>
         </div>
     </div>
 </main>
@@ -267,26 +280,6 @@
         });
     });
 
-    // МОДАЛЬНОЕ ОКНО
-    const modal = document.getElementById('modal');
-    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        resetPrice();
-    });
-    document.getElementById('close-modal').onclick = () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    };
-    window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
-
-    document.getElementById('booking-form').onsubmit = (e) => {
-        e.preventDefault();
-        alert('Запись успешно создана!');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    };
-
     // --- СВЯЗАННЫЕ СПИСКИ И ЦЕНЫ ---
     const priceList = {
         haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
@@ -316,10 +309,59 @@
         ]
     };
 
+    const modal = document.getElementById('modal');
     const selectService = document.getElementById('select-service');
     const selectRank = document.getElementById('select-rank');
     const selectMaster = document.getElementById('select-master');
     const priceOutput = document.getElementById('price-output');
+
+    // МОДАЛЬНОЕ ОКНО И АВТОПОДСТАНОВКА МАСТЕРА
+    document.querySelectorAll('.open-modal').forEach(button => {
+        button.onclick = (e) => {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Сбрасываем форму по умолчанию
+            document.getElementById('booking-form').reset();
+            
+            // Проверяем, нажата ли кнопка конкретного мастера
+            const targetRank = e.currentTarget.getAttribute('data-rank');
+            const targetMaster = e.currentTarget.getAttribute('data-master');
+            
+            if (targetRank && targetMaster) {
+                // Устанавливаем категорию (ранг)
+                selectRank.value = targetRank;
+                // Перегенерируем список мастеров под этот ранг
+                updateMastersList();
+                // Выбираем конкретного мастера
+                selectMaster.value = targetMaster;
+            } else {
+                // Если кликнули общую кнопку — просто очищаем списки
+                updateMastersList();
+            }
+            
+            updatePrice();
+        };
+    });
+
+    document.getElementById('close-modal').onclick = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    
+    window.onclick = (e) => { 
+        if(e.target === modal) { 
+            modal.style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        } 
+    }
+
+    document.getElementById('booking-form').onsubmit = (e) => {
+        e.preventDefault();
+        alert('Запись успешно создана!');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
 
     function updateMastersList() {
         const rank = selectRank.value;
@@ -335,6 +377,7 @@
 
         mastersByRank[rank].forEach(master => {
             const option = document.createElement('option');
+            option.value = master.name;
             option.textContent = master.name;
             selectMaster.appendChild(option);
         });
@@ -350,12 +393,6 @@
         } else {
             priceOutput.textContent = '0 ₸';
         }
-    }
-
-    function resetPrice() {
-        document.getElementById('booking-form').reset();
-        updateMastersList();
-        priceOutput.textContent = '0 ₸';
     }
 
     selectRank.addEventListener('change', () => {
