@@ -40,7 +40,12 @@
 
         /* Бургер-меню для мобилок */
         .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
-        .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
+        .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; transform-origin: center; }
+        
+        /* Добавил анимацию превращения бургера в крестик */
+        .burger-menu.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .burger-menu.open span:nth-child(2) { opacity: 0; }
+        .burger-menu.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
         /* SERVICES STYLES */
         .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
@@ -270,11 +275,11 @@
         <form id="booking-form">
             <div class="form-group">
                 <label>Ваше имя</label>
-                <input type="text" placeholder="Александр" required>
+                <input type="text" id="client-name" placeholder="Александр" required>
             </div>
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="tel" placeholder="+7 (___) ___ __ __" required>
+                <input type="tel" id="client-phone" placeholder="+7 (___) ___ __ __" required>
             </div>
             <div class="form-group">
                 <label>Выберите услугу</label>
@@ -336,6 +341,7 @@
     document.querySelectorAll('nav a').forEach(link => {
         link.addEventListener('click', () => {
             navMenu.classList.remove('active');
+            burgerBtn.classList.remove('open');
         });
     });
 
@@ -344,7 +350,12 @@
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        resetPrice();
+        // Если в localStorage уже есть сохраненные данные, форма заполнит их автоматически, а не сбросит
+        if(!localStorage.getItem('barberBooking')) {
+            resetPrice();
+        } else {
+            loadSavedBooking();
+        }
     });
     document.getElementById('close-modal').onclick = () => {
         modal.style.display = 'none';
@@ -352,9 +363,24 @@
     };
     window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
 
+    // --- ЛОГИКА СОХРАНЕНИЯ В КОРЗИНУ (LOCALSTORAGE) ---
     document.getElementById('booking-form').onsubmit = (e) => {
         e.preventDefault();
-        alert('Запись успешно создана!');
+
+        // Собираем данные из формы заказа
+        const bookingData = {
+            name: document.getElementById('client-name').value,
+            phone: document.getElementById('client-phone').value,
+            service: selectService.value,
+            rank: selectRank.value,
+            master: selectMaster.value,
+            price: priceOutput.textContent
+        };
+
+        // Записываем собранный объект в localStorage под ключом 'barberBooking'
+        localStorage.setItem('barberBooking', JSON.stringify(bookingData));
+
+        alert('Запись успешно создана и сохранена в корзине!');
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     };
@@ -414,6 +440,7 @@
         // Заполняем отфильтрованными мастерами
         mastersByRank[rank].forEach(master => {
             const option = document.createElement('option');
+            option.value = master.name;
             option.textContent = master.name;
             selectMaster.appendChild(option);
         });
@@ -438,12 +465,30 @@
         priceOutput.textContent = '0 ₸';
     }
 
+    // Функция автозаполнения сохраненных в localStorage данных
+    function loadSavedBooking() {
+        const savedData = localStorage.getItem('barberBooking');
+        if (savedData) {
+            const booking = JSON.parse(savedData);
+            document.getElementById('client-name').value = booking.name;
+            document.getElementById('client-phone').value = booking.phone;
+            selectService.value = booking.service;
+            selectRank.value = booking.rank;
+            updateMastersList();
+            selectMaster.value = booking.master;
+            priceOutput.textContent = booking.price;
+        }
+    }
+
     // Слушатели событий
     selectRank.addEventListener('change', () => {
         updateMastersList();
         updatePrice();
     });
     selectService.addEventListener('change', updatePrice);
+
+    // При загрузке этой страницы проверяем, были ли сохраненные данные ранее
+    window.addEventListener('DOMContentLoaded', loadSavedBooking);
 </script>
 
 </body>
