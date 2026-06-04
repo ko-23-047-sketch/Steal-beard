@@ -45,6 +45,10 @@
         .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
         .btn-header:hover { background-color: var(--btn-orange); }
+        
+        /* Кнопка мастера */
+        .btn-staff-auth { background: transparent; color: white; border: 1px solid var(--orange); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        .btn-staff-auth:hover { background: var(--orange); }
 
         /* Бургер-меню для мобилок */
         .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
@@ -123,6 +127,13 @@
 
         .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
 
+        /* СТИЛИ ДЛЯ ВКЛАДОК В ОКНЕ АВТОРИЗАЦИИ */
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .auth-tab { background: none; border: none; color: #aaa; font-size: 16px; font-weight: bold; cursor: pointer; padding: 5px 10px; }
+        .auth-tab.active { color: var(--orange); border-bottom: 2px solid var(--orange); }
+        .auth-form { display: none; }
+        .auth-form.active { display: block; }
+
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
 
         /* --- АДАПТИВНОСТЬ --- */
@@ -178,6 +189,7 @@
             <a href="cosmetics.html">Косметика</a>
         </nav>
         <div class="header-actions">
+            <button class="btn-staff-auth" id="open-auth-modal">Вход для мастеров</button>
             <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
             <span class="header-phone">+7 777 726 22 88</span>
             <button class="btn-header open-modal">Записаться</button>
@@ -369,6 +381,53 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="auth-modal">
+    <div class="modal-content">
+        <span class="modal-close" id="close-auth-modal">&times;</span>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="tab-login">ВХОД</button>
+            <button class="auth-tab" id="tab-register">РЕГИСТРАЦИЯ МАСТЕРА</button>
+        </div>
+
+        <form id="login-form" class="auth-form active">
+            <div class="form-group">
+                <label>Электронная почта (Email)</label>
+                <input type="email" placeholder="barber@beard.kz" required>
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-submit">ВОЙТИ РАБОТАТЬ</button>
+        </form>
+
+        <form id="register-form" class="auth-form">
+            <div class="form-group">
+                <label>Имя и Фамилия мастера</label>
+                <input type="text" id="reg-name" placeholder="Иван Иванов" required>
+            </div>
+            <div class="form-group">
+                <label>Категория (Квалификация)</label>
+                <select id="reg-rank" required>
+                    <option value="trainee">Стажёр</option>
+                    <option value="barber">Барбер</option>
+                    <option value="senior">Старший барбер</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Электронная почта (Email)</label>
+                <input type="email" id="reg-email" placeholder="newbarber@beard.kz" required>
+            </div>
+            <div class="form-group">
+                <label>Придумайте пароль (мин. 6 символов)</label>
+                <input type="password" id="reg-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-submit">ЗАРЕГИСТРИРОВАТЬ В STAFF.HTML</button>
+        </form>
+    </div>
+</div>
+
 <footer>
     <div class="container">
         <p>© 2026 STEEL BEARD BARBERSHOP. <br> Алматы, пр. Назарбаева 100. Тел: +7 777 726 22 88</p>
@@ -378,6 +437,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+    // Подключаем модуль авторизации Firebase Auth
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
@@ -391,6 +452,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app); // Инициализация авторизации
 
     // БУРГЕР МЕНЮ
     const burgerBtn = document.getElementById('burgerBtn');
@@ -401,7 +463,7 @@
         burgerBtn.classList.toggle('open');
     });
 
-    // МОДАЛЬНОЕ ОКНО
+    // МОДАЛЬНОЕ ОКНО ЗАПИСИ КЛИЕНТА
     const modal = document.getElementById('modal');
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
         modal.style.display = 'flex';
@@ -412,7 +474,97 @@
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     };
-    window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
+
+    // МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ ПЕРСОНАЛА
+    const authModal = document.getElementById('auth-modal');
+    document.getElementById('open-auth-modal').onclick = () => {
+        authModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+    document.getElementById('close-auth-modal').onclick = () => {
+        authModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    // Закрытие окон по клику на фон
+    window.onclick = (e) => { 
+        if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } 
+        if(e.target === authModal) { authModal.style.display = 'none'; document.body.style.overflow = 'auto'; } 
+    }
+
+    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (ВХОД / РЕГИСТРАЦИЯ)
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+
+    tabLogin.onclick = () => {
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+    };
+    tabRegister.onclick = () => {
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+    };
+
+
+    // ЛОГИКА РЕГИСТРАЦИИ МАСТЕРА В FIREBASE AUTH + FIRESTORE
+    document.getElementById('register-form').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('reg-name').value;
+        const rank = document.getElementById('reg-rank').value;
+        const email = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-password').value;
+
+        try {
+            // 1. Создаем учетную запись в Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // 2. Сохраняем расширенные данные мастера в Firestore (коллекция 'masters'), чтобы staff.html мог их прочитать
+            await addDoc(collection(db, 'masters'), {
+                uid: user.uid,
+                name: name,
+                rank: rank,
+                email: email,
+                createdAt: serverTimestamp()
+            });
+
+            alert(`Мастер ${name} успешно зарегистрирован в системе! Данные появятся в staff.html.`);
+            authModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('register-form').reset();
+            
+        } catch (error) {
+            console.error("Ошибка при регистрации мастера:", error);
+            alert("Ошибка регистрации: " + error.message);
+        }
+    };
+
+    // ЛОГИКА ВХОДА ДЛЯ МАСТЕРОВ
+    document.getElementById('login-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const email = e.target.querySelector('input[type="email"]').value;
+        const password = e.target.querySelector('input[type="password"]').value;
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            alert("Вы успешно вошли под учетной записью персонала!");
+            
+            // Здесь можно перенаправить вошедшего мастера на панель управления или на staff.html
+            window.location.href = "staff.html"; 
+            
+        } catch (error) {
+            console.error("Ошибка входа:", error);
+            alert("Неверный email или пароль мастера.");
+        }
+    };
+
 
     // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ
     let cart = JSON.parse(localStorage.getItem('barberCart')) || [];
