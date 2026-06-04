@@ -70,12 +70,16 @@
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
-        .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; }
+        .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; overflow-y: auto; max-height: 90vh; }
         .modal-close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
         
+        /* Блок расписания мастера */
+        .schedule-info-box { background: #2a2a2a; border-left: 4px solid var(--orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; display: none; }
+        .schedule-info-box .title { font-weight: bold; color: var(--orange); margin-bottom: 4px; }
+
         /* Блок стоимости */
         .price-display-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
         .price-display-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
@@ -258,6 +262,27 @@
                 </select>
             </div>
 
+            <!-- Блок визуализации графика выбранного мастера -->
+            <div class="schedule-info-box" id="schedule-box">
+                <div class="title">График работы мастера:</div>
+                <div id="schedule-text">Понедельник — Пятница, 10:00 - 21:00</div>
+            </div>
+
+            <!-- НОВЫЕ ПОЛЯ: День и Время -->
+            <div class="form-group">
+                <label>День недели</label>
+                <select id="select-day" required disabled>
+                    <option value="">Сначала выберите мастера</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Время записи</label>
+                <select id="select-time" required disabled>
+                    <option value="">Сначала выберите день</option>
+                </select>
+            </div>
+
             <div class="price-display-box">
                 <div class="price-display-title">Стоимость услуги:</div>
                 <div class="price-display-val" id="price-output">0 ₸</div>
@@ -278,7 +303,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // ⚠️ Вставьте сюда конфиг вашего Firebase проекта, как в прошлых файлах
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
         authDomain: "YOUR_AUTH_DOMAIN",
@@ -288,40 +312,28 @@
         appId: "YOUR_APP_ID"
     };
 
-    // Инициализация Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Переменная для хранения текущей цены текстом
     let currentPriceValue = 0;
 
-    // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
+    // БУРГЕР МЕНЮ
     const burgerBtn = document.getElementById('burgerBtn');
     const navMenu = document.getElementById('navMenu');
-
     burgerBtn.addEventListener('click', () => {
         navMenu.classList.toggle('active');
         burgerBtn.classList.toggle('open');
     });
 
-    document.querySelectorAll('nav a').forEach(link => {
-        link.addEventListener('click', () => {
-            navMenu.classList.remove('active');
-        });
-    });
-
-    // --- ФУНКЦИОНАЛ КОРЗИНЫ (ОБНОВЛЕНИЕ СЧЕТЧИКА) ---
+    // ОБНОВЛЕНИЕ КОРЗИНЫ
     function updateCartBadge() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
         document.getElementById('cartCount').textContent = totalCount;
     }
-    // Вызываем при загрузке страницы
     updateCartBadge();
-    // Слушаем изменения из других вкладок (например, со страницы косметики)
-    window.addEventListener('storage', updateCartBadge);
 
-    // --- СВЯЗАННЫЕ СПИСКИ И ЦЕНЫ ---
+    // ПРАЙС-ЛИСТ И НАЗВАНИЯ
     const priceList = {
         haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
         beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
@@ -342,21 +354,25 @@
         clipper: "Стрижка машинкой"
     };
 
+    // БАЗА ДАННЫХ МАСТЕРОВ С СЕГМЕНТИРОВАННЫМ ГРАФИКОМ (Дни и Часы)
+    const defaultHours = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+    const weekendHours = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+
     const mastersByRank = {
         trainee: [
-            { name: "Любой свободный стажёр" },
-            { name: "Артем (стажер)" }
+            { name: "Любой свободный стажёр", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Артем (стажер)", scheduleText: "Пн, Ср, Пт: 10:00 - 21:00", days: { "Пн": defaultHours, "Ср": defaultHours, "Пт": defaultHours } }
         ],
         barber: [
-            { name: "Любой свободный барбер" },
-            { name: "Дмитрий (барбер)" },
-            { name: "Кирилл (барбер)" }
+            { name: "Любой свободный барбер", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Дмитрий (барбер)", scheduleText: "Вт, Чт, Сб: 10:00 - 21:00", days: { "Вт": defaultHours, "Чт": defaultHours, "Сб": weekendHours } },
+            { name: "Кирилл (барбер)", scheduleText: "Пн, Вт, Ср, Чт: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours } }
         ],
         senior: [
-            { name: "Любой свободный старший барбер" },
-            { name: "Александр (старший барбер)" },
-            { name: "Игорь (старший барбер)" },
-            { name: "Максим (старший барбер)" }
+            { name: "Любой свободный старший барбер", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Александр (старший барбер)", scheduleText: "Пн-Пт: 10:00 - 20:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours } },
+            { name: "Игорь (старший барбер)", scheduleText: "Ср, Чт, Пт, Сб, Вс: 11:00 - 21:00", days: { "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Максим (старший барбер)", scheduleText: "Пн, Вт, Пт, Сб: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Пт": defaultHours, "Сб": weekendHours } }
         ]
     };
 
@@ -364,16 +380,21 @@
     const selectService = document.getElementById('select-service');
     const selectRank = document.getElementById('select-rank');
     const selectMaster = document.getElementById('select-master');
+    const selectDay = document.getElementById('select-day');
+    const selectTime = document.getElementById('select-time');
+    const scheduleBox = document.getElementById('schedule-box');
+    const scheduleText = document.getElementById('schedule-text');
     const priceOutput = document.getElementById('price-output');
     const submitBtn = document.getElementById('submitBtn');
 
-    // МОДАЛЬНОЕ ОКНО И АВТОПОДСТАНОВКА МАСТЕРА
+    // КЛИК НА КАРТОЧКУ / ОТКРЫТИЕ МОДАЛКИ
     document.querySelectorAll('.open-modal').forEach(button => {
         button.onclick = (e) => {
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
             document.getElementById('booking-form').reset();
+            resetDateTimeFields();
             
             const targetRank = e.currentTarget.getAttribute('data-rank');
             const targetMaster = e.currentTarget.getAttribute('data-master');
@@ -382,37 +403,48 @@
                 selectRank.value = targetRank;
                 updateMastersList();
                 selectMaster.value = targetMaster;
+                handleMasterChange();
             } else {
                 updateMastersList();
+                scheduleBox.style.display = 'none';
             }
             
             updatePrice();
         };
     });
 
-    document.getElementById('close-modal').onclick = () => {
+    document.getElementById('close-modal').onclick = () => { close(); };
+    window.onclick = (e) => { if(e.target === modal) close(); };
+
+    function close() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-    };
-    
-    window.onclick = (e) => { 
-        if(e.target === modal) { 
-            modal.style.display = 'none'; 
-            document.body.style.overflow = 'auto'; 
-        } 
     }
 
+    function resetDateTimeFields() {
+        selectDay.innerHTML = '<option value="">Сначала выберите мастера</option>';
+        selectDay.disabled = true;
+        selectTime.innerHTML = '<option value="">Сначала выберите день</option>';
+        selectTime.disabled = true;
+    }
+
+    // ОБНОВЛЕНИЕ СПИСКА МАСТЕРОВ
     function updateMastersList() {
         const rank = selectRank.value;
         selectMaster.innerHTML = '';
+        resetDateTimeFields();
+        scheduleBox.style.display = 'none';
 
         if (!rank) {
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Сначала выберите категорию';
-            selectMaster.appendChild(defaultOption);
+            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
             return;
         }
+
+        // Дефолтный пустой вариант
+        const placeholder = document.createElement('option');
+        placeholder.value = "";
+        placeholder.textContent = "-- Выберите мастера --";
+        selectMaster.appendChild(placeholder);
 
         mastersByRank[rank].forEach(master => {
             const option = document.createElement('option');
@@ -422,6 +454,63 @@
         });
     }
 
+    // ЛОГИКА ПРИ ВЫБОРЕ КОНКРЕТНОГО БАРБЕРА (ПОКАЗ ГРАФИКА + ДНЕЙ)
+    function handleMasterChange() {
+        const rank = selectRank.value;
+        const masterName = selectMaster.value;
+
+        resetDateTimeFields();
+
+        if (!rank || !masterName) {
+            scheduleBox.style.display = 'none';
+            return;
+        }
+
+        const masterObj = mastersByRank[rank].find(m => m.name === masterName);
+        
+        if (masterObj) {
+            // 1. Показываем блок с текстовым расписанием
+            scheduleText.textContent = masterObj.scheduleText;
+            scheduleBox.style.display = 'block';
+
+            // 2. Активируем выбор дней недели, доступных у этого мастера
+            selectDay.innerHTML = '<option value="">-- Выберите день --</option>';
+            Object.keys(masterObj.days).forEach(day => {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day;
+                selectDay.appendChild(option);
+            });
+            selectDay.disabled = false;
+        }
+    }
+
+    // ЛОГИКА ПРИ ВЫБОРЕ ДНЯ НЕДЕЛИ (ПОКАЗ ДОСТУПНОГО ВРЕМЕНИ)
+    function handleDayChange() {
+        const rank = selectRank.value;
+        const masterName = selectMaster.value;
+        const selectedDay = selectDay.value;
+
+        selectTime.innerHTML = '<option value="">-- Выберите время --</option>';
+        selectTime.disabled = true;
+
+        if (!rank || !masterName || !selectedDay) return;
+
+        const masterObj = mastersByRank[rank].find(m => m.name === masterName);
+        const availableHours = masterObj.days[selectedDay];
+
+        if (availableHours) {
+            availableHours.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                selectTime.appendChild(option);
+            });
+            selectTime.disabled = false;
+        }
+    }
+
+    // РАСЧЕТ СТОИМОСТИ
     function updatePrice() {
         const service = selectService.value;
         const rank = selectRank.value;
@@ -436,18 +525,20 @@
         }
     }
 
+    // СЛУШАТЕЛИ ИЗМЕНЕНИЙ В СЕЛЕКТАХ
     selectRank.addEventListener('change', () => {
         updateMastersList();
         updatePrice();
     });
+    selectMaster.addEventListener('change', handleMasterChange);
+    selectDay.addEventListener('change', handleDayChange);
     selectService.addEventListener('change', updatePrice);
 
 
-    // --- ОТПРАВКА ДАННЫХ В FIREBASE FIRESTORE ---
+    // ОТПРАВКА ДАННЫХ В FIREBASE
     document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
         
-        // Блокируем кнопку на время отправки
         submitBtn.disabled = true;
         submitBtn.textContent = 'ОТПРАВКА...';
 
@@ -457,30 +548,34 @@
         const serviceName = serviceNamesRu[serviceCode] || serviceCode;
         const rank = selectRank.options[selectRank.selectedIndex].text;
         const master = selectMaster.value;
+        const bookingDay = selectDay.value;   // Новый параметр
+        const bookingTime = selectTime.value; // Новый параметр
 
         try {
-            // Сохраняем бронирование в коллекцию "appointments"
+            // Сохраняем расширенное бронирование в Firebase Firestore
             await addDoc(collection(db, "appointments"), {
                 clientName: name,
                 clientPhone: phone,
                 service: serviceName,
                 masterRank: rank,
                 masterName: master,
+                bookingDayOfWeek: bookingDay, // Сохранение дня в БД
+                bookingTime: bookingTime,     // Сохранение времени в БД
                 price: currentPriceValue,
                 createdAt: new Date().toISOString()
             });
 
-            alert('Запись успешно создана и сохранена!');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            alert(`Запись успешно создана!\nЖдем вас в ${bookingDay} в ${bookingTime}.`);
+            close();
             document.getElementById('booking-form').reset();
             updatePrice();
+            resetDateTimeFields();
+            scheduleBox.style.display = 'none';
 
         } catch (error) {
             console.error("Ошибка при сохранении в Firebase: ", error);
             alert('Произошла ошибка при отправке данных. Пожалуйста, попробуйте позже.');
         } finally {
-            // Разблокируем кнопку обратно
             submitBtn.disabled = false;
             submitBtn.textContent = 'ПОДТВЕРДИТЬ';
         }
