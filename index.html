@@ -73,6 +73,7 @@
         }
         .video-bg iframe { width: 100%; height: 100%; border: none; }
 
+        /* Защитный щит закрывает только видео, не стрелки */
         .video-click-shield {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -115,6 +116,7 @@
         .video-slide { min-width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
         .video-slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
         
+        /* Стрелки слайдера вынесены на слой выше щита */
         .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.6); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 15; }
         .slider-arrow:hover { background: var(--orange); }
         .arrow-prev { left: 20px; }
@@ -132,7 +134,7 @@
         .step h3 { font-size: 22px; margin-bottom: 15px; border-left: 4px solid var(--orange); padding-left: 10px; }
         .step p { line-height: 1.5; color: #555; margin: 0; }
 
-        /* CART DRAWER */
+        /* CART DRAWER (ВЫЕЗЖАЮЩАЯ КОРЗИНА) */
         .cart-drawer {
             position: fixed; top: 0; right: -420px; width: 400px; height: 100%;
             background: white; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 35px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
@@ -161,15 +163,15 @@
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
-        .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; }
+        .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; overflow-y: auto; max-height: 90vh; }
         .modal-close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
         
-        /* Стили расписания */
-        .schedule-box { display: flex; gap: 15px; }
-        .schedule-box .form-group { flex: 1; margin-bottom: 0; }
+        /* Блок расписания мастера */
+        .schedule-info-box { background: #2a2a2a; border-left: 4px solid var(--orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; display: none; }
+        .schedule-info-box .title { font-weight: bold; color: var(--orange); margin-bottom: 4px; }
 
         /* Блок стоимости */
         .price-display-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
@@ -228,7 +230,6 @@
             .about-text h2 { font-size: 28px; }
             .modal-content { padding: 30px 20px; }
             .btn-header { padding: 8px 15px; font-size: 13px; }
-            .schedule-box { flex-direction: column; gap: 20px; }
         }
     </style>
 </head>
@@ -344,6 +345,7 @@
     </div>
 </div>
 
+<!-- ОБНОВЛЕННОЕ МОДАЛЬНОЕ ОКНО С ПОЛНЫМ НАБОРОМ ПОЛЕЙ РАСПИСАНИЯ -->
 <div class="modal-overlay" id="modal">
     <div class="modal-content">
         <span class="modal-close" id="close-modal">&times;</span>
@@ -388,36 +390,26 @@
                 </select>
             </div>
 
-            <div class="schedule-box">
-                <div class="form-group">
-                    <label>День недели</label>
-                    <select id="select-day" required>
-                        <option value="">Выберите день</option>
-                        <option value="Понедельник">Понедельник</option>
-                        <option value="Вторник">Вторник</option>
-                        <option value="Среда">Среда</option>
-                        <option value="Четверг">Четверг</option>
-                        <option value="Пятница">Пятница</option>
-                        <option value="Суббота">Суббота</option>
-                        <option value="Воскресенье">Воскресенье</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Время записи</label>
-                    <select id="select-time" required>
-                        <option value="">Выберите время</option>
-                        <option value="10:00">10:00</option>
-                        <option value="11:30">11:30</option>
-                        <option value="13:00">13:00</option>
-                        <option value="14:30">14:30</option>
-                        <option value="16:00">16:00</option>
-                        <option value="17:30">17:30</option>
-                        <option value="19:00">19:00</option>
-                        <option value="20:30">20:30</option>
-                    </select>
-                </div>
+            <!-- Блок визуализации графика выбранного мастера -->
+            <div class="schedule-info-box" id="schedule-box">
+                <div class="title">График работы мастера:</div>
+                <div id="schedule-text">Понедельник — Пятница, 10:00 - 21:00</div>
             </div>
-            <div style="margin-bottom: 20px;"></div>
+
+            <!-- Поля дня недели и времени -->
+            <div class="form-group">
+                <label>День недели</label>
+                <select id="select-day" required disabled>
+                    <option value="">Сначала выберите мастера</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Время записи</label>
+                <select id="select-time" required disabled>
+                    <option value="">Сначала выберите день</option>
+                </select>
+            </div>
 
             <div class="price-display-box">
                 <div class="price-display-title">Стоимость услуги:</div>
@@ -440,6 +432,7 @@
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
+    // Конфигурация Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
         authDomain: "diplom-f94fb.firebaseapp.com",
@@ -450,6 +443,7 @@
         measurementId: "G-139BDNRX6Q"
     };
 
+    // Инициализация сервисов
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
@@ -481,13 +475,15 @@
     let currentIndex = 0;
     let slideInterval;
 
-    slides.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('slider-dot');
-        if (index === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goToSlide(index));
-        dotsContainer.appendChild(dot);
-    });
+    if (slides.length > 0 && dotsContainer) {
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('slider-dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+    }
 
     const dots = document.querySelectorAll('.slider-dot');
 
@@ -500,11 +496,13 @@
     }
 
     function nextSlide() {
+        if (!slides.length) return;
         currentIndex = (currentIndex + 1) % slides.length;
         updateSlider();
     }
 
     function prevSlide() {
+        if (!slides.length) return;
         currentIndex = (currentIndex - 1 + slides.length) % slides.length;
         updateSlider();
     }
@@ -524,12 +522,13 @@
         startTimer();
     }
 
-    nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
-    prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
+    if (nextBtn && prevBtn) {
+        nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+        prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
+        startTimer();
+    }
 
-    startTimer();
-
-    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ
+    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ (ЧЕРЕЗ LOCALSTORAGE)
     let cart = JSON.parse(localStorage.getItem('barberCart')) || [];
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
@@ -565,14 +564,15 @@
     window.removeFromCart = removeFromCart;
 
     function updateUI() {
+        if (!cartContainer) return;
         cartContainer.innerHTML = '';
         let total = 0;
         let totalItemsCount = 0;
 
         if (cart.length === 0) {
             cartContainer.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">Корзина пуста</p>';
-            cartCountLabel.innerText = '0';
-            totalPriceLabel.innerText = '0 ₸';
+            if (cartCountLabel) cartCountLabel.innerText = '0';
+            if (totalPriceLabel) totalPriceLabel.innerText = '0 ₸';
             return;
         }
 
@@ -598,27 +598,59 @@
                 </div>`;
         });
 
-        cartCountLabel.innerText = totalItemsCount;
-        totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
+        if (cartCountLabel) cartCountLabel.innerText = totalItemsCount;
+        if (totalPriceLabel) totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
     }
 
-    document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
-    document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
+    if (document.getElementById('open-cart')) document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
+    if (document.getElementById('close-cart')) document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
 
     updateUI();
 
-    // МОДАЛЬНОЕ ОКНО ЗАПИСИ
-    const modal = document.getElementById('modal');
-    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        resetPrice();
-    });
-    document.getElementById('close-modal').onclick = () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+    // ОТПРАВКА ЗАКАЗА ИЗ КОРЗИНЫ В FIREBASE FIRESTORE
+    if (document.getElementById('checkout-btn')) {
+        document.getElementById('checkout-btn').onclick = async () => {
+            if (cart.length === 0) {
+                alert('Ваша корзина пуста!');
+                return;
+            }
+
+            const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
+            if (!phoneNumber) {
+                alert("Оформление заказа отменено.");
+                return;
+            }
+
+            const orderData = {
+                phone: phoneNumber,
+                items: cart,
+                totalPrice: totalPriceLabel.innerText,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, 'orders'), orderData);
+                alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
+                cart = [];
+                saveCart();
+                cartDrawer.classList.remove('active');
+            } catch (error) {
+                console.error("Ошибка при оформлении заказа: ", error);
+                alert('Не удалось отправить заказ. Попробуйте еще раз.');
+            }
+        };
+    }
+
+    // --- БАЗА ДАННЫХ И НАСТРОЙКИ СВЯЗАННЫХ СПИСКОВ ЗАПИСИ ---
+    const priceList = {
+        haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
+        beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
+        kids:       { trainee: 3000,  barber: 7000,  senior: 10000 },
+        complex:    { trainee: 5000,  barber: 13000, senior: 18000 },
+        shave_face: { trainee: 3000,  barber: 5000,  senior: 8000  },
+        shave_head: { trainee: 3000,  barber: 6000,  senior: 9000  },
+        clipper:    { trainee: 3000,  barber: 6000,  senior: 8000  }
     };
-    window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
 
     const serviceNamesRu = {
         haircut: "Мужская стрижка",
@@ -630,124 +662,94 @@
         clipper: "Стрижка машинкой"
     };
 
-    const submitBtn = document.getElementById('submitBtn');
-
-    // ОТПРАВКА ОНЛАЙН-ЗАПИСИ В FIREBASE FIRESTORE
-    document.getElementById('booking-form').onsubmit = async (e) => {
-        e.preventDefault();
-        
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'ОТПРАВКА...';
-
-        const serviceCode = document.getElementById('select-service').value;
-        const serviceName = serviceNamesRu[serviceCode] || serviceCode;
-        const rankText = selectRank.options[selectRank.selectedIndex].text;
-
-        const bookingData = {
-            clientName: document.getElementById('client-name').value,
-            clientPhone: document.getElementById('client-phone').value,
-            service: serviceName,
-            masterRank: rankText,
-            masterName: document.getElementById('select-master').value,
-            day: document.getElementById('select-day').value,
-            time: document.getElementById('select-time').value,
-            price: currentPriceValue,
-            createdAt: serverTimestamp()
-        };
-
-        try {
-            // Сохраняем в единую коллекцию appointments
-            await addDoc(collection(db, 'appointments'), bookingData);
-            alert('Запись успешно создана! Данные отправлены в систему.');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetPrice();
-        } catch (error) {
-            console.error("Ошибка при записи: ", error);
-            alert('Произошла ошибка при отправке записи. Проверьте правила базы данных.');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'ПОДТВЕРДИТЬ';
-        }
-    };
-
-    // ОТПРАВКА ЗАКАЗА ИЗ КОРЗИНЫ
-    document.getElementById('checkout-btn').onclick = async () => {
-        if (cart.length === 0) {
-            alert('Ваша корзина пуста!');
-            return;
-        }
-
-        const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
-        if (!phoneNumber) {
-            alert("Оформление заказа отменено.");
-            return;
-        }
-
-        const orderData = {
-            phone: phoneNumber,
-            items: cart,
-            totalPrice: totalPriceLabel.innerText,
-            createdAt: serverTimestamp()
-        };
-
-        try {
-            await addDoc(collection(db, 'orders'), orderData);
-            alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
-            cart = [];
-            saveCart();
-            cartDrawer.classList.remove('active');
-        } catch (error) {
-            console.error("Ошибка при оформлении заказа: ", error);
-            alert('Не удалось отправить заказ. Попробуйте еще раз.');
-        }
-    };
-
-    // --- ЛОГИКА СВЯЗАННЫХ СПИСКОВ И ЦЕН ---
-    const priceList = {
-        haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
-        beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
-        kids:       { trainee: 3000,  barber: 7000,  senior: 10000 },
-        complex:    { trainee: 5000,  barber: 13000, senior: 18000 },
-        shave_face: { trainee: 3000,  barber: 5000,  senior: 8000  },
-        shave_head: { trainee: 3000,  barber: 6000,  senior: 9000  },
-        clipper:    { trainee: 3000,  barber: 6000,  senior: 8000  }
-    };
+    const defaultHours = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+    const weekendHours = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 
     const mastersByRank = {
         trainee: [
-            { name: "Любой свободный стажёр" },
-            { name: "Артем (стажер)" }
+            { name: "Любой свободный стажёр", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Артем (стажер)", scheduleText: "Пн, Ср, Пт: 10:00 - 21:00", days: { "Пн": defaultHours, "Ср": defaultHours, "Пт": defaultHours } }
         ],
         barber: [
-            { name: "Любой свободный барбер" },
-            { name: "Дмитрий (барбер)" },
-            { name: "Кирилл (барбер)" }
+            { name: "Любой свободный барбер", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Дмитрий (барбер)", scheduleText: "Вт, Чт, Сб: 10:00 - 21:00", days: { "Вт": defaultHours, "Чт": defaultHours, "Сб": weekendHours } },
+            { name: "Кирилл (барбер)", scheduleText: "Пн, Вт, Ср, Чт: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours } }
         ],
         senior: [
-            { name: "Любой свободный старший барбер" },
-            { name: "Александр (старший барбер)" },
-            { name: "Игорь (старший барбер)" },
-            { name: "Максим (старший барбер)" }
+            { name: "Любой свободный старший барбер", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Александр (старший барбер)", scheduleText: "Пн-Пт: 10:00 - 20:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours } },
+            { name: "Игорь (старший барбер)", scheduleText: "Ср, Чт, Пт, Сб, Вс: 11:00 - 21:00", days: { "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Максим (старший барбер)", scheduleText: "Пн, Вт, Пт, Сб: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Пт": defaultHours, "Сб": weekendHours } }
         ]
     };
 
+    const modal = document.getElementById('modal');
     const selectService = document.getElementById('select-service');
     const selectRank = document.getElementById('select-rank');
     const selectMaster = document.getElementById('select-master');
+    const selectDay = document.getElementById('select-day');
+    const selectTime = document.getElementById('select-time');
+    const scheduleBox = document.getElementById('schedule-box');
+    const scheduleText = document.getElementById('schedule-text');
     const priceOutput = document.getElementById('price-output');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // КЛИК НА КНОПКИ ОТКРЫТИЯ МОДАЛКИ
+    document.querySelectorAll('.open-modal').forEach(button => {
+        button.onclick = (e) => {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            document.getElementById('booking-form').reset();
+            resetDateTimeFields();
+            
+            const targetRank = e.currentTarget.getAttribute('data-rank');
+            const targetMaster = e.currentTarget.getAttribute('data-master');
+            
+            if (targetRank && targetMaster) {
+                selectRank.value = targetRank;
+                updateMastersList();
+                selectMaster.value = targetMaster;
+                handleMasterChange();
+            } else {
+                updateMastersList();
+                scheduleBox.style.display = 'none';
+            }
+            
+            updatePrice();
+        };
+    });
+
+    document.getElementById('close-modal').onclick = () => { close(); };
+    window.onclick = (e) => { if(e.target === modal) close(); };
+
+    function close() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function resetDateTimeFields() {
+        selectDay.innerHTML = '<option value="">Сначала выберите мастера</option>';
+        selectDay.disabled = true;
+        selectTime.innerHTML = '<option value="">Сначала выберите день</option>';
+        selectTime.disabled = true;
+    }
 
     function updateMastersList() {
         const rank = selectRank.value;
         selectMaster.innerHTML = '';
+        resetDateTimeFields();
+        if (scheduleBox) scheduleBox.style.display = 'none';
 
         if (!rank) {
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Сначала выберите категорию';
-            selectMaster.appendChild(defaultOption);
+            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
             return;
         }
+
+        const placeholder = document.createElement('option');
+        placeholder.value = "";
+        placeholder.textContent = "-- Выберите мастера --";
+        selectMaster.appendChild(placeholder);
 
         mastersByRank[rank].forEach(master => {
             const option = document.createElement('option');
@@ -757,6 +759,58 @@
         });
     }
 
+    function handleMasterChange() {
+        const rank = selectRank.value;
+        const masterName = selectMaster.value;
+
+        resetDateTimeFields();
+
+        if (!rank || !masterName) {
+            if (scheduleBox) scheduleBox.style.display = 'none';
+            return;
+        }
+
+        const masterObj = mastersByRank[rank].find(m => m.name === masterName);
+        
+        if (masterObj) {
+            if (scheduleText) scheduleText.textContent = masterObj.scheduleText;
+            if (scheduleBox) scheduleBox.style.display = 'block';
+
+            selectDay.innerHTML = '<option value="">-- Выберите день --</option>';
+            Object.keys(masterObj.days).forEach(day => {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day;
+                selectDay.appendChild(option);
+            });
+            selectDay.disabled = false;
+        }
+    }
+
+    function handleDayChange() {
+        const rank = selectRank.value;
+        const masterName = selectMaster.value;
+        const selectedDay = selectDay.value;
+
+        selectTime.innerHTML = '<option value="">-- Выберите время --</option>';
+        selectTime.disabled = true;
+
+        if (!rank || !masterName || !selectedDay) return;
+
+        const masterObj = mastersByRank[rank].find(m => m.name === masterName);
+        const availableHours = masterObj.days[selectedDay];
+
+        if (availableHours) {
+            availableHours.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                selectTime.appendChild(option);
+            });
+            selectTime.disabled = false;
+        }
+    }
+
     function updatePrice() {
         const service = selectService.value;
         const rank = selectRank.value;
@@ -764,25 +818,70 @@
         if (service && rank) {
             const price = priceList[service][rank];
             currentPriceValue = price;
-            priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
+            if (priceOutput) priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
         } else {
             currentPriceValue = 0;
-            priceOutput.textContent = '0 ₸';
+            if (priceOutput) priceOutput.textContent = '0 ₸';
         }
-    }
-
-    function resetPrice() {
-        document.getElementById('booking-form').reset();
-        updateMastersList();
-        currentPriceValue = 0;
-        priceOutput.textContent = '0 ₸';
     }
 
     selectRank.addEventListener('change', () => {
         updateMastersList();
         updatePrice();
     });
+    selectMaster.addEventListener('change', handleMasterChange);
+    selectDay.addEventListener('change', handleDayChange);
     selectService.addEventListener('change', updatePrice);
+
+    // ОТПРАВКА ДАННЫХ В FIREBASE (ОБНОВЛЕННАЯ С ДНЕМ И ВРЕМЕНЕМ)
+    document.getElementById('booking-form').onsubmit = async (e) => {
+        e.preventDefault();
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'ОТПРАВКА...';
+        }
+
+        const name = document.getElementById('client-name').value;
+        const phone = document.getElementById('client-phone').value;
+        const serviceCode = selectService.value;
+        const serviceName = serviceNamesRu[serviceCode] || serviceCode;
+        const rank = selectRank.options[selectRank.selectedIndex].text;
+        const master = selectMaster.value;
+        const bookingDay = selectDay.value;  
+        const bookingTime = selectTime.value;
+
+        try {
+            // Сохраняем бронирование в Firebase Firestore (в ту же коллекцию 'appointments')
+            await addDoc(collection(db, "appointments"), {
+                clientName: name,
+                clientPhone: phone,
+                service: serviceName,
+                masterRank: rank,
+                masterName: master,
+                bookingDayOfWeek: bookingDay, 
+                bookingTime: bookingTime,     
+                price: currentPriceValue,
+                createdAt: new Date().toISOString()
+            });
+
+            alert(`Запись успешно создана!\nЖдем вас в ${bookingDay} в ${bookingTime}.`);
+            close();
+            document.getElementById('booking-form').reset();
+            updatePrice();
+            resetDateTimeFields();
+            if (scheduleBox) scheduleBox.style.display = 'none';
+
+        } catch (error) {
+            console.error("Ошибка при сохранении в Firebase: ", error);
+            alert('Произошла ошибка при отправке данных. Пожалуйста, попробуйте позже.');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ПОДТВЕРДИТЬ';
+            }
+        }
+    };
 </script>
 
 </body>
