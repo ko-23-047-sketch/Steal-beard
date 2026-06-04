@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Наши услуги — Steel Beard Barbershop</title>
+    <title>Steel Beard Barbershop</title>
     <style>
         :root {
             --orange: #ff751f; 
@@ -31,7 +31,7 @@
         
         nav { display: flex; }
         nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
-        nav a:hover, nav a.active { color: var(--orange); }
+        nav a:hover { color: var(--orange); }
         
         .header-actions { display: flex; align-items: center; gap: 20px; }
         
@@ -45,46 +45,94 @@
         .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
         .btn-header:hover { background-color: var(--btn-orange); }
-        
-        /* Кнопка мастера */
-        .btn-staff-auth { background: transparent; color: white; border: 1px solid var(--orange); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s; }
-        .btn-staff-auth:hover { background: var(--orange); }
 
         /* Бургер-меню для мобилок */
         .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
         .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
 
-        /* SERVICES STYLES */
-        .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
-        
-        .services-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 60px; }
-        
-        .service-card { 
-            display: flex; background: var(--table-bg); border-radius: 35px; overflow: hidden; 
-            align-items: center; min-height: 140px; transition: 0.3s; box-sizing: border-box;
+        /* HERO С ВИДЕОФОНОМ */
+        .hero {
+            position: relative;
+            height: 80vh;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            text-align: center;
         }
-        
-        @media (hover: hover) {
-            .service-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-        }
-        
-        .service-img-box { width: 160px; height: 140px; min-width: 160px; background: #aaa; overflow: hidden; }
-        .service-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .service-info { flex: 1; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-sizing: border-box; }
-        
-        .service-det { display: flex; flex-direction: column; }
-        .service-title-text { font-size: 22px; font-weight: bold; color: #222; text-transform: capitalize; }
-        .time-label { font-size: 16px; color: var(--text-muted); font-weight: normal; margin-top: 4px; }
-        
-        .service-prices { display: flex; gap: 30px; }
-        .price-item { text-align: center; }
-        .price-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
-        .price-val { font-size: 20px; font-weight: bold; color: var(--dark); white-space: nowrap; }
 
-        .btn-online-container { text-align: right; margin-bottom: 60px; }
-        .btn-online { background-color: var(--btn-orange); color: white; padding: 20px 50px; border-radius: 35px; border: none; font-weight: bold; font-size: 22px; cursor: pointer; display: inline-block; text-transform: lowercase; transition: background-color 0.3s; }
-        .btn-online:hover { background-color: var(--orange); }
+        .video-bg {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100vw; height: 56.25vw;
+            min-height: 100vh; min-width: 177.77vh;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .video-bg iframe { width: 100%; height: 100%; border: none; }
+
+        /* Защитный щит закрывает только видео, не стрелки */
+        .video-click-shield {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; background: transparent;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3;
+        }
+
+        .hero .container { position: relative; z-index: 4; }
+        .hero h1 { font-family: 'Georgia', serif; font-style: italic; font-size: 56px; margin: 0 0 20px; }
+        .hero p { max-width: 850px; margin: 0 auto 40px; font-size: 22px; line-height: 1.6; font-style: italic; }
+
+        .btn-whatsapp {
+            background-color: var(--orange); color: white; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 20px; padding: 15px 50px; border-radius: 45px 15px 45px 15px; font-weight: bold; font-size: 26px; transition: transform 0.2s;
+        }
+        .btn-whatsapp:hover { transform: scale(1.03); }
+        .wa-icon { height: 50px; width: auto; object-fit: contain; }
+
+        /* ABOUT */
+        .about-grid { display: flex; align-items: stretch; margin: 80px 0 40px; border-radius: 30px; overflow: hidden; background-color: #000; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        .about-text { 
+            width: 50%; background-color: var(--orange); color: white; padding: 60px;
+            display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 2; clip-path: polygon(0 0, 100% 0, 88% 100%, 0% 100%);
+        }
+        .about-text h2 { font-size: 42px; margin: 0 0 25px; font-weight: bold; }
+        .about-text p { font-size: 17px; line-height: 1.5; font-weight: bold; margin-bottom: 15px; }
+        .about-img { width: 60%; margin-left: -10%; background-image: linear-gradient(to right, var(--orange) 0%, rgba(255, 117, 31, 0.2) 20%, transparent 50%), url('bg2.png'); background-size: cover; background-position: center; min-height: 500px; }
+
+        /* VIDEO SLIDER */
+        .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
+        .video-slider-wrapper { position: relative; width: 100%; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); background: #000; }
+        .video-slider-container { width: 100%; overflow: hidden; position: relative; }
+        .video-slider { display: flex; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
+        .video-slide { min-width: 100%; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .video-slide iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
+        
+        /* Стрелки слайдера вынесены на слой выше щита */
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.6); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 15; }
+        .slider-arrow:hover { background: var(--orange); }
+        .arrow-prev { left: 20px; }
+        .arrow-next { right: 20px; }
+        
+        .slider-dots { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .slider-dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; cursor: pointer; transition: 0.3s; }
+        .slider-dot.active { background: var(--orange); width: 25px; border-radius: 10px; }
+
+        /* STEPS */
+        .steps-section h2 { text-align:center; font-size: 36px; margin: 80px 0 40px; text-transform: uppercase; }
+        .steps-box { display: flex; justify-content: space-between; margin-bottom: 80px; gap: 40px; }
+        .step { flex: 1; }
+        .step-num { background: var(--orange); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; margin-bottom: 25px; }
+        .step h3 { font-size: 22px; margin-bottom: 15px; border-left: 4px solid var(--orange); padding-left: 10px; }
+        .step p { line-height: 1.5; color: #555; margin: 0; }
 
         /* CART DRAWER (ВЫЕЗЖАЮЩАЯ КОРЗИНА) */
         .cart-drawer {
@@ -121,22 +169,26 @@
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
         
+        /* Блок стоимости */
         .price-display-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
         .price-display-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
         .price-display-val { font-size: 24px; font-weight: bold; color: var(--orange); }
 
         .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
 
-        /* СТИЛИ ДЛЯ ВКЛАДОК В ОКНЕ АВТОРИЗАЦИИ */
-        .auth-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #444; padding-bottom: 10px; }
-        .auth-tab { background: none; border: none; color: #aaa; font-size: 16px; font-weight: bold; cursor: pointer; padding: 5px 10px; }
-        .auth-tab.active { color: var(--orange); border-bottom: 2px solid var(--orange); }
-        .auth-form { display: none; }
-        .auth-form.active { display: block; }
-
-        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
+        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; }
 
         /* --- АДАПТИВНОСТЬ --- */
+        @media (max-width: 992px) {
+            .about-grid { flex-direction: column; }
+            .about-text { width: 100%; clip-path: none; padding: 40px 30px; box-sizing: border-box; }
+            .about-img { width: 100%; margin-left: 0; min-height: 350px; background-image: linear-gradient(to bottom, var(--orange) 0%, transparent 30%), url('bg2.png'); }
+            
+            .steps-box { gap: 30px; }
+            .hero h1 { font-size: 46px; }
+            .hero p { font-size: 18px; }
+        }
+
         @media (max-width: 768px) {
             .burger-menu { display: flex; }
             nav {
@@ -148,26 +200,29 @@
             nav a { margin-right: 0; font-size: 18px; }
 
             .header-phone { display: none; }
-            .section-title { font-size: 28px; margin: 40px 0 25px; }
+
+            .hero h1 { font-size: 36px; }
+            .hero p { font-size: 16px; margin-bottom: 30px; }
+            .btn-whatsapp { padding: 12px 30px; font-size: 18px; gap: 12px; }
+            .wa-icon { height: 35px; }
+
+            .steps-box { flex-direction: column; gap: 40px; }
+            .step { text-align: center; }
+            .step-num { margin: 0 auto 15px; }
+            .step h3 { border-left: none; padding-left: 0; }
+
+            .section-title, .steps-section h2 { font-size: 28px; margin: 50px 0 30px; }
+            .about-text h2 { font-size: 32px; }
             
-            .service-card { flex-direction: column; align-items: stretch; text-align: center; height: auto; border-radius: 25px; }
-            .service-img-box { width: 100%; height: 180px; }
-            .service-info { flex-direction: column; text-align: center; padding: 20px; gap: 20px; }
-            .service-prices { justify-content: space-around; width: 100%; gap: 10px; }
-            
-            .btn-online-container { text-align: center; }
-            .btn-online { width: 100%; box-sizing: border-box; padding: 18px 30px; font-size: 18px; }
-            
+            .slider-arrow { width: 40px; height: 40px; font-size: 18px; }
             .cart-drawer { width: 100%; right: -100%; padding: 25px; }
             .cart-item { flex-direction: column; align-items: flex-start; gap: 10px; }
             .cart-item > div:last-child { width: 100%; justify-content: space-between; }
         }
 
         @media (max-width: 480px) {
-            .section-title { font-size: 24px; }
-            .service-title-text { font-size: 18px; }
-            .price-val { font-size: 16px; }
-            .price-cat { font-size: 10px; }
+            .hero h1 { font-size: 32px; }
+            .about-text h2 { font-size: 28px; }
             .modal-content { padding: 30px 20px; }
             .btn-header { padding: 8px 15px; font-size: 13px; }
         }
@@ -183,13 +238,12 @@
             <span></span>
         </button>
         <nav id="navMenu">
-            <a href="index.html">Главная</a>
+            <a href="#" class="active">Главная</a>
             <a href="staff.html">Персонал</a>
-            <a href="#" class="active">Услуги</a>
+            <a href="services.html">Услуги</a>
             <a href="cosmetics.html">Косметика</a>
         </nav>
         <div class="header-actions">
-            <button class="btn-staff-auth" id="open-auth-modal">Вход для мастеров</button>
             <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
             <span class="header-phone">+7 777 726 22 88</span>
             <button class="btn-header open-modal">Записаться</button>
@@ -197,120 +251,79 @@
     </div>
 </header>
 
-<main class="container">
-    <h2 class="section-title">наши услуги</h2>
-    
-    <div class="services-list">
-        <div class="service-card">
-            <div class="service-img-box"><img src="s1.png" alt="Мужская стрижка"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">мужская стрижка</span>
-                    <span class="time-label">/60 мин</span>
-                </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">4500 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">10000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">14000 ₸</div></div>
-                </div>
-            </div>
-        </div>
+<section class="hero">
+    <div class="video-bg">
+        <iframe src="https://www.youtube.com/embed/QRr6DpCkxSY?autoplay=1&loop=1&mute=1&playlist=QRr6DpCkxSY&start=34&controls=0&showinfo=0&rel=0&iv_load_policy=3" allow="autoplay; encrypted-media"></iframe>
+        <div class="video-click-shield"></div>
+    </div>
 
-        <div class="service-card">
-            <div class="service-img-box"><img src="s2.png" alt="Оформление бороды"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">оформление бороды</span>
-                    <span class="time-label">/45 мин</span>
-                </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">2000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">6000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">8000 ₸</div></div>
-                </div>
-            </div>
-        </div>
+    <div class="container">
+        <h1>Steel Beard</h1>
+        <p>— это профессиональный барберинг в самом центре города. Премиальная косметика, опытные мастера и сервис, достойный джентльмена.</p>
+        <a href="https://wa.me/77777262288" class="btn-whatsapp">
+            <div style="text-align: left; line-height: 1.1;">Запись в<br>Whatsapp</div>
+            <img src="png1.png" alt="WA" class="wa-icon">
+        </a>
+    </div>
+</section>
 
-        <div class="service-card">
-            <div class="service-img-box"><img src="s3.png" alt="Детская стрижка"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">детская стрижка</span>
-                    <span class="time-label">/45 мин</span>
-                </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">7000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">10000 ₸</div></div>
-                </div>
-            </div>
+<section class="container">
+    <div class="about-grid">
+        <div class="about-text">
+            <h2>O Steel Beard</h2>
+            <p>Steel Beard — это territory мужчин, где стиль закаляется, как сталь.</p>
+            <p>Мы создали место для тех, кто ценит твердость решений, остроту линий и безупречное качество.</p>
+            <p>Название «Steel Beard» символизирует наш подход к работе: острота опасной бритвы, крепость наших стандартов и долговечность вашего образа.</p>
+            <p>Здесь мы превращаем уход за собой в настоящий ритуал мужской эстетики.</p>
         </div>
+        <div class="about-img"></div>
+    </div>
+</section>
 
-        <div class="service-card">
-            <div class="service-img-box"><img src="s4.png" alt="Стрижка + Борода"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">мужская стрижка + борода</span>
-                    <span class="time-label">/90 мин</span>
+<section class="container">
+    <h2 class="section-title">Процесс работы</h2>
+    <div class="video-slider-wrapper">
+        <button class="slider-arrow arrow-prev" id="prevBtn">&#10094;</button>
+        <button class="slider-arrow arrow-next" id="nextBtn">&#10095;</button>
+        
+        <div class="video-slider-container">
+            <div class="video-click-shield"></div>
+            <div class="video-slider" id="videoSlider">
+                <div class="video-slide">
+                    <iframe src="https://www.youtube.com/embed/bEzi3V36a8w?start=53&rel=0&autoplay=1&loop=1&mute=1&playlist=bEzi3V36a8w&controls=0&showinfo=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">5000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">13000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">18000 ₸</div></div>
+                <div class="video-slide">
+                    <iframe src="https://www.youtube.com/embed/I43zp--AMmc?start=53&rel=0&autoplay=1&loop=1&mute=1&playlist=I43zp--AMmc&controls=0&showinfo=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
-            </div>
-        </div>
-
-        <div class="service-card">
-            <div class="service-img-box"><img src="s5.png" alt="Бритье лица"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">бритье лица</span>
-                    <span class="time-label">/40 мин</span>
-                </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">5000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">8000 ₸</div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="service-card">
-            <div class="service-img-box"><img src="s6.png" alt="Бритье головы"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">бритье головы</span>
-                    <span class="time-label">/45 мин</span>
-                </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">6000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">9000 ₸</div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="service-card">
-            <div class="service-img-box"><img src="s7.png" alt="Стрижка машинкой"></div>
-            <div class="service-info">
-                <div class="service-det">
-                    <span class="service-title-text">стрижка машинкой</span>
-                    <span class="time-label">/30 мин</span>
-                </div>
-                <div class="service-prices">
-                    <div class="price-item"><div class="price-cat">Стажёр</div><div class="price-val">3000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Барбер</div><div class="price-val">6000 ₸</div></div>
-                    <div class="price-item"><div class="price-cat">Старший</div><div class="price-val">8000 ₸</div></div>
+                <div class="video-slide">
+                    <iframe src="https://www.youtube.com/embed/VMcX_HHlZio?start=22&rel=0&autoplay=1&loop=1&mute=1&playlist=VMcX_HHlZio&controls=0&showinfo=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
     </div>
+    <div class="slider-dots" id="sliderDots"></div>
+</section>
 
-    <div class="btn-online-container">
-        <button class="btn-online open-modal">записаться онлайн</button>
+<section class="container steps-section">
+    <h2>Этапы обслуживания</h2>
+    <div class="steps-box">
+        <div class="step">
+            <div class="step-num">1</div>
+            <h3>Консультация</h3>
+            <p>Мастер оценивает форму лица и структуру волос. Мы адаптируем тренды под вашу индивидуальность.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <h3>Ритуал ухода</h3>
+            <p>От точного среза ножницами до классического бритья с горячим полотенцем и опасной бритвой.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <h3>Финальный штрих</h3>
+            <p>Использование премиальной косметики, стайлинг и профессиональные рекомендации по уходу.</p>
+        </div>
     </div>
-</main>
+</section>
 
 <div class="cart-drawer" id="cart-drawer">
     <div class="cart-header">
@@ -353,7 +366,7 @@
                     <option value="clipper">Стрижка машинкой</option>
                 </select>
             </div>
-            
+
             <div class="form-group">
                 <label>Категория мастера</label>
                 <select id="select-rank" required>
@@ -363,9 +376,9 @@
                     <option value="senior">Старший барбер</option>
                 </select>
             </div>
-
+            
             <div class="form-group">
-                <label>Выберите мастерa</label>
+                <label>Выберите мастера</label>
                 <select id="select-master" required>
                     <option value="">Сначала выберите категорию</option>
                 </select>
@@ -381,53 +394,6 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="auth-modal">
-    <div class="modal-content">
-        <span class="modal-close" id="close-auth-modal">&times;</span>
-        
-        <div class="auth-tabs">
-            <button class="auth-tab active" id="tab-login">ВХОД</button>
-            <button class="auth-tab" id="tab-register">РЕГИСТРАЦИЯ МАСТЕРА</button>
-        </div>
-
-        <form id="login-form" class="auth-form active">
-            <div class="form-group">
-                <label>Электронная почта (Email)</label>
-                <input type="email" placeholder="barber@beard.kz" required>
-            </div>
-            <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-submit">ВОЙТИ РАБОТАТЬ</button>
-        </form>
-
-        <form id="register-form" class="auth-form">
-            <div class="form-group">
-                <label>Имя и Фамилия мастера</label>
-                <input type="text" id="reg-name" placeholder="Иван Иванов" required>
-            </div>
-            <div class="form-group">
-                <label>Категория (Квалификация)</label>
-                <select id="reg-rank" required>
-                    <option value="trainee">Стажёр</option>
-                    <option value="barber">Барбер</option>
-                    <option value="senior">Старший барбер</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Электронная почта (Email)</label>
-                <input type="email" id="reg-email" placeholder="newbarber@beard.kz" required>
-            </div>
-            <div class="form-group">
-                <label>Придумайте пароль (мин. 6 символов)</label>
-                <input type="password" id="reg-password" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-submit">ЗАРЕГИСТРИРОВАТЬ В STAFF.HTML</button>
-        </form>
-    </div>
-</div>
-
 <footer>
     <div class="container">
         <p>© 2026 STEEL BEARD BARBERSHOP. <br> Алматы, пр. Назарбаева 100. Тел: +7 777 726 22 88</p>
@@ -436,10 +402,10 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-    // Подключаем модуль авторизации Firebase Auth
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
+    // Конфигурация Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
         authDomain: "diplom-f94fb.firebaseapp.com",
@@ -450,11 +416,12 @@
         measurementId: "G-139BDNRX6Q"
     };
 
+    // Инициализация сервисов
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const db = getFirestore(app);
-    const auth = getAuth(app); // Инициализация авторизации
 
-    // БУРГЕР МЕНЮ
+    // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
     const burgerBtn = document.getElementById('burgerBtn');
     const navMenu = document.getElementById('navMenu');
 
@@ -463,110 +430,71 @@
         burgerBtn.classList.toggle('open');
     });
 
-    // МОДАЛЬНОЕ ОКНО ЗАПИСИ КЛИЕНТА
-    const modal = document.getElementById('modal');
-    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        resetPrice();
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+        });
     });
-    document.getElementById('close-modal').onclick = () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    };
 
-    // МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ ПЕРСОНАЛА
-    const authModal = document.getElementById('auth-modal');
-    document.getElementById('open-auth-modal').onclick = () => {
-        authModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    };
-    document.getElementById('close-auth-modal').onclick = () => {
-        authModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    };
+    // СКРИПТ СЛАЙДЕРА
+    const slider = document.getElementById('videoSlider');
+    const slides = document.querySelectorAll('.video-slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dotsContainer = document.getElementById('sliderDots');
+    
+    let currentIndex = 0;
+    let slideInterval;
 
-    // Закрытие окон по клику на фон
-    window.onclick = (e) => { 
-        if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } 
-        if(e.target === authModal) { authModal.style.display = 'none'; document.body.style.overflow = 'auto'; } 
+    slides.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.classList.add('slider-dot');
+        if (index === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goToSlide(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.slider-dot');
+
+    function updateSlider() {
+        if (!slider) return;
+        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
     }
 
-    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (ВХОД / РЕГИСТРАЦИЯ)
-    const tabLogin = document.getElementById('tab-login');
-    const tabRegister = document.getElementById('tab-register');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateSlider();
+    }
 
-    tabLogin.onclick = () => {
-        tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
-        loginForm.classList.add('active');
-        registerForm.classList.remove('active');
-    };
-    tabRegister.onclick = () => {
-        tabRegister.classList.add('active');
-        tabLogin.classList.remove('active');
-        registerForm.classList.add('active');
-        loginForm.classList.remove('active');
-    };
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateSlider();
+    }
 
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+        resetTimer();
+    }
 
-    // ЛОГИКА РЕГИСТРАЦИИ МАСТЕРА В FIREBASE AUTH + FIRESTORE
-    document.getElementById('register-form').onsubmit = async (e) => {
-        e.preventDefault();
-        
-        const name = document.getElementById('reg-name').value;
-        const rank = document.getElementById('reg-rank').value;
-        const email = document.getElementById('reg-email').value;
-        const password = document.getElementById('reg-password').value;
+    function startTimer() {
+        slideInterval = setInterval(nextSlide, 10000); 
+    }
 
-        try {
-            // 1. Создаем учетную запись в Firebase Auth
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+    function resetTimer() {
+        clearInterval(slideInterval);
+        startTimer();
+    }
 
-            // 2. Сохраняем расширенные данные мастера в Firestore (коллекция 'masters'), чтобы staff.html мог их прочитать
-            await addDoc(collection(db, 'masters'), {
-                uid: user.uid,
-                name: name,
-                rank: rank,
-                email: email,
-                createdAt: serverTimestamp()
-            });
+    nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+    prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
 
-            alert(`Мастер ${name} успешно зарегистрирован в системе! Данные появятся в staff.html.`);
-            authModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            document.getElementById('register-form').reset();
-            
-        } catch (error) {
-            console.error("Ошибка при регистрации мастера:", error);
-            alert("Ошибка регистрации: " + error.message);
-        }
-    };
+    startTimer();
 
-    // ЛОГИКА ВХОДА ДЛЯ МАСТЕРОВ
-    document.getElementById('login-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const email = e.target.querySelector('input[type="email"]').value;
-        const password = e.target.querySelector('input[type="password"]').value;
-
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            alert("Вы успешно вошли под учетной записью персонала!");
-            
-            // Здесь можно перенаправить вошедшего мастера на панель управления или на staff.html
-            window.location.href = "staff.html"; 
-            
-        } catch (error) {
-            console.error("Ошибка входа:", error);
-            alert("Неверный email или пароль мастера.");
-        }
-    };
-
-
-    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ
+    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ (ЧЕРЕЗ LOCALSTORAGE)
     let cart = JSON.parse(localStorage.getItem('barberCart')) || [];
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
@@ -576,6 +504,7 @@
     function changeQuantity(name, action) {
         const item = cart.find(item => item.name === name);
         if (!item) return;
+
         if (action === 'increase') {
             item.quantity += 1;
         } else if (action === 'decrease') {
@@ -641,11 +570,26 @@
     document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
     document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
 
+    // Первичная отрисовка корзины при загрузке страницы
     updateUI();
+
+    // МОДАЛЬНОЕ ОКНО ЗАПИСИ
+    const modal = document.getElementById('modal');
+    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        resetPrice();
+    });
+    document.getElementById('close-modal').onclick = () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    window.onclick = (e) => { if(e.target === modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; } }
 
     // ОТПРАВКА ОНЛАЙН-ЗАПИСИ В FIREBASE FIRESTORE
     document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
+        
         const bookingData = {
             name: e.target.querySelector('input[type="text"]').value,
             phone: e.target.querySelector('input[type="tel"]').value,
@@ -655,6 +599,7 @@
             price: document.getElementById('price-output').textContent,
             createdAt: serverTimestamp()
         };
+
         try {
             await addDoc(collection(db, 'bookings'), bookingData);
             alert('Запись успешно создана! Данные отправлены в систему.');
@@ -663,21 +608,30 @@
             resetPrice();
         } catch (error) {
             console.error("Ошибка при записи: ", error);
-            alert('Произошла ошибка при отправке записи.');
+            alert('Произошла ошибка при отправке записи. Проверьте правила базы данных.');
         }
     };
 
     // ОТПРАВКА ЗАКАЗА ИЗ КОРЗИНЫ В FIREBASE FIRESTORE
     document.getElementById('checkout-btn').onclick = async () => {
-        if (cart.length === 0) { alert('Ваша корзина пуста!'); return; }
+        if (cart.length === 0) {
+            alert('Ваша корзина пуста!');
+            return;
+        }
+
         const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
-        if (!phoneNumber) { alert("Оформление заказа отменено."); return; }
+        if (!phoneNumber) {
+            alert("Оформление заказа отменено.");
+            return;
+        }
+
         const orderData = {
             phone: phoneNumber,
             items: cart,
             totalPrice: totalPriceLabel.innerText,
             createdAt: serverTimestamp()
         };
+
         try {
             await addDoc(collection(db, 'orders'), orderData);
             alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
@@ -690,7 +644,7 @@
         }
     };
 
-    // СВЯЗАННЫЕ СПИСКИ И ЦЕНЫ
+    // --- ЛОГИКА СВЯЗАННЫХ СПИСКОВ И ЦЕН ---
     const priceList = {
         haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
         beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
@@ -702,9 +656,21 @@
     };
 
     const mastersByRank = {
-        trainee: [{ name: "Любой свободный стажёр" }, { name: "Артем (стажер)" }],
-        barber: [{ name: "Любой свободный барбер" }, { name: "Дмитрий (барбер)" }, { name: "Кирилл (барбер)" }],
-        senior: [{ name: "Любой свободный старший барбер" }, { name: "Александр (старший барбер)" }, { name: "Игорь (старший барбер)" }, { name: "Максим (старший барбер)" }]
+        trainee: [
+            { name: "Любой свободный стажёр" },
+            { name: "Артем (стажер)" }
+        ],
+        barber: [
+            { name: "Любой свободный барбер" },
+            { name: "Дмитрий (барбер)" },
+            { name: "Кирилл (барбер)" }
+        ],
+        senior: [
+            { name: "Любой свободный старший барбер" },
+            { name: "Александр (старший барбер)" },
+            { name: "Игорь (старший барбер)" },
+            { name: "Максим (старший барбер)" }
+        ]
     };
 
     const selectService = document.getElementById('select-service');
@@ -715,13 +681,17 @@
     function updateMastersList() {
         const rank = selectRank.value;
         selectMaster.innerHTML = '';
+
         if (!rank) {
-            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Сначала выберите категорию';
+            selectMaster.appendChild(defaultOption);
             return;
         }
+
         mastersByRank[rank].forEach(master => {
             const option = document.createElement('option');
-            option.value = master.name;
             option.textContent = master.name;
             selectMaster.appendChild(option);
         });
@@ -730,8 +700,10 @@
     function updatePrice() {
         const service = selectService.value;
         const rank = selectRank.value;
+
         if (service && rank) {
-            priceOutput.textContent = priceList[service][rank].toLocaleString('ru-RU') + ' ₸';
+            const price = priceList[service][rank];
+            priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
         } else {
             priceOutput.textContent = '0 ₸';
         }
@@ -743,8 +715,12 @@
         priceOutput.textContent = '0 ₸';
     }
 
-    selectRank.addEventListener('change', () => { updateMastersList(); updatePrice(); });
+    selectRank.addEventListener('change', () => {
+        updateMastersList();
+        updatePrice();
+    });
     selectService.addEventListener('change', updatePrice);
 </script>
+
 </body>
 </html>
