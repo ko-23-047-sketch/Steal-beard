@@ -53,33 +53,33 @@
         /* COSMETICS SECTION */
         .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
         
+        /* Оригинальная сетка товаров */
         .cosmetics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
             margin-bottom: 80px;
         }
 
         .cosmetic-card {
+            width: calc(25% - 15px);
             background-color: var(--light-grey);
-            border-radius: 25px;
+            border-radius: 35px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: 0.3s;
+            box-sizing: border-box;
         }
-        .cosmetic-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        
+        @media (hover: hover) {
+            .cosmetic-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
         }
 
         .cosmetic-img-box {
-            height: 220px;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 250px;
+            background-color: #aaa;
             overflow: hidden;
         }
         .cosmetic-img-box img {
@@ -89,28 +89,24 @@
         }
 
         .cosmetic-body {
-            padding: 20px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             flex: 1;
         }
         .cosmetic-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            color: var(--dark);
-            margin: 0 0 10px;
-            min-height: 44px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            color: #222;
+            margin: 0 0 10px 0;
+            text-transform: capitalize;
         }
         .cosmetic-desc {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-muted);
-            margin: 0 0 20px;
+            margin: 0 0 20px 0;
             line-height: 1.4;
-            flex: 1;
         }
         .cosmetic-footer {
             display: flex;
@@ -119,18 +115,20 @@
             margin-top: auto;
         }
         .cosmetic-price {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
-            color: var(--orange);
+            color: var(--dark);
         }
         .btn-buy {
-            background-color: var(--dark);
+            background-color: var(--btn-orange);
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             font-weight: bold;
+            font-size: 14px;
             cursor: pointer;
+            text-transform: lowercase;
             transition: background-color 0.2s;
         }
         .btn-buy:hover {
@@ -184,11 +182,11 @@
         .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
         .btn-submit:disabled { background: #555; cursor: not-allowed; }
 
-        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; }
+        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px; }
 
-        /* --- АДАПТИВНОСТЬ --- */
+        /* --- АДАПТИВНОСТЬ ДЛЯ СЕТКИ ТОВАРОВ И ШАПКИ --- */
         @media (max-width: 1024px) {
-            .cosmetics-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+            .cosmetic-card { width: calc(33.33% - 14px); }
         }
 
         @media (max-width: 768px) {
@@ -203,7 +201,8 @@
 
             .header-phone { display: none; }
             .section-title { font-size: 28px; margin: 40px 0 25px; }
-            .cosmetics-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .cosmetic-card { width: calc(50% - 10px); }
             
             .cart-drawer { width: 100%; right: -100%; padding: 25px; }
             .cart-item { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -211,7 +210,7 @@
         }
 
         @media (max-width: 480px) {
-            .cosmetics-grid { grid-template-columns: 1fr; }
+            .cosmetic-card { width: 100%; }
             .modal-content { padding: 30px 20px; }
             .btn-header { padding: 8px 15px; font-size: 13px; }
         }
