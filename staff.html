@@ -38,11 +38,6 @@
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
         .btn-header:hover { background-color: var(--btn-orange); }
 
-        /* Корзина в шапке */
-        .cart-icon-container { position: relative; display: flex; align-items: center; text-decoration: none; color: white; margin-right: 15px; }
-        .cart-icon-container:hover { color: var(--orange); }
-        .cart-count { position: absolute; top: -8px; right: -12px; background-color: var(--orange); color: white; font-size: 11px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
-
         /* Бургер-меню для мобилок */
         .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
         .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
@@ -133,10 +128,6 @@
             <a href="cosmetics.html">Косметика</a>
         </nav>
         <div class="header-actions">
-            <a href="cart.html" class="cart-icon-container">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                <span class="cart-count" id="cartCount">0</span>
-            </a>
             <span class="header-phone">+7 777 726 22 88</span>
             <button class="btn-header open-modal">Записаться</button>
         </div>
@@ -262,13 +253,11 @@
                 </select>
             </div>
 
-            <!-- Блок визуализации графика выбранного мастера -->
             <div class="schedule-info-box" id="schedule-box">
                 <div class="title">График работы мастера:</div>
                 <div id="schedule-text">Понедельник — Пятница, 10:00 - 21:00</div>
             </div>
 
-            <!-- НОВЫЕ ПОЛЯ: День и Время -->
             <div class="form-group">
                 <label>День недели</label>
                 <select id="select-day" required disabled>
@@ -324,14 +313,6 @@
         navMenu.classList.toggle('active');
         burgerBtn.classList.toggle('open');
     });
-
-    // ОБНОВЛЕНИЕ КОРЗИНЫ
-    function updateCartBadge() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        document.getElementById('cartCount').textContent = totalCount;
-    }
-    updateCartBadge();
 
     // ПРАЙС-ЛИСТ И НАЗВАНИЯ
     const priceList = {
@@ -440,7 +421,6 @@
             return;
         }
 
-        // Дефолтный пустой вариант
         const placeholder = document.createElement('option');
         placeholder.value = "";
         placeholder.textContent = "-- Выберите мастера --";
@@ -469,11 +449,9 @@
         const masterObj = mastersByRank[rank].find(m => m.name === masterName);
         
         if (masterObj) {
-            // 1. Показываем блок с текстовым расписанием
             scheduleText.textContent = masterObj.scheduleText;
             scheduleBox.style.display = 'block';
 
-            // 2. Активируем выбор дней недели, доступных у этого мастера
             selectDay.innerHTML = '<option value="">-- Выберите день --</option>';
             Object.keys(masterObj.days).forEach(day => {
                 const option = document.createElement('option');
@@ -525,7 +503,6 @@
         }
     }
 
-    // СЛУШАТЕЛИ ИЗМЕНЕНИЙ В СЕЛЕКТАХ
     selectRank.addEventListener('change', () => {
         updateMastersList();
         updatePrice();
@@ -548,19 +525,18 @@
         const serviceName = serviceNamesRu[serviceCode] || serviceCode;
         const rank = selectRank.options[selectRank.selectedIndex].text;
         const master = selectMaster.value;
-        const bookingDay = selectDay.value;   // Новый параметр
-        const bookingTime = selectTime.value; // Новый параметр
+        const bookingDay = selectDay.value;   
+        const bookingTime = selectTime.value; 
 
         try {
-            // Сохраняем расширенное бронирование в Firebase Firestore
             await addDoc(collection(db, "appointments"), {
                 clientName: name,
                 clientPhone: phone,
                 service: serviceName,
                 masterRank: rank,
                 masterName: master,
-                bookingDayOfWeek: bookingDay, // Сохранение дня в БД
-                bookingTime: bookingTime,     // Сохранение времени в БД
+                bookingDayOfWeek: bookingDay, 
+                bookingTime: bookingTime,     
                 price: currentPriceValue,
                 createdAt: new Date().toISOString()
             });
