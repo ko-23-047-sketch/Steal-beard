@@ -104,6 +104,14 @@
         .cart-btn-qty:hover { color: var(--orange); }
         .cart-qty-num { font-weight: bold; font-size: 14px; min-width: 15px; text-align: center; color: var(--dark); }
         .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 5px; }
+        
+        /* СТИЛИ ДЛЯ БЛОКА ДОСТАВКИ В КОРЗИНЕ */
+        .cart-delivery-box { margin: 15px 0; border-top: 1px solid #eee; padding-top: 15px; }
+        .cart-delivery-box label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: var(--dark); }
+        .cart-delivery-box select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; background: #fff; color: var(--dark); }
+        .cart-address-group { margin-top: 12px; display: none; }
+        .cart-address-group input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; color: var(--dark); }
+        
         .cart-footer { padding-top: 25px; border-top: 1px solid #eee; }
         .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
         .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; transition: background-color 0.2s; }
@@ -312,6 +320,20 @@
         <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer; color: var(--dark);">&times;</button>
     </div>
     <div class="cart-items" id="cart-items-container"></div>
+    
+    <!-- ДОБАВЛЕННЫЙ БЛОК ВЫБОРА ДОСТАВКИ -->
+    <div class="cart-delivery-box" id="cart-delivery-section" style="display: none;">
+        <label for="cart-delivery-method">Способ получения</label>
+        <select id="cart-delivery-method">
+            <option value="pickup">Самовывоз (пр. Назарбаева 100)</option>
+            <option value="delivery">Доставка курьером (+1 500 ₸)</option>
+        </select>
+        <div class="cart-address-group" id="cart-address-group">
+            <label for="cart-customer-address">Адрес доставки</label>
+            <input type="text" id="cart-customer-address" placeholder="Город, улица, дом, квартира">
+        </div>
+    </div>
+
     <div class="cart-footer">
         <div class="cart-total-box">
             <span>Итого:</span>
@@ -446,12 +468,60 @@
         document.body.style.overflow = 'auto';
     }
 
-    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ
-    let cart = JSON.parse(localStorage.getItem('barberCart')) || [];
+    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ С ДОСТАВКОЙ
+    let cart = [];
+    const DELIVERY_COST = 1500;
+
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
     const cartCountLabel = document.getElementById('cart-count');
     const totalPriceLabel = document.getElementById('cart-total-price');
+    
+    const deliverySection = document.getElementById('cart-delivery-section');
+    const deliveryMethodSelect = document.getElementById('cart-delivery-method');
+    const addressGroup = document.getElementById('cart-address-group');
+    const addressInput = document.getElementById('cart-customer-address');
+
+    function saveCartToStorage() {
+        localStorage.setItem('barberCart', JSON.stringify(cart));
+        localStorage.setItem('barber_delivery_method', deliveryMethodSelect.value);
+        localStorage.setItem('barber_delivery_address', addressInput.value);
+    }
+
+    function loadCartFromStorage() {
+        const savedCart = localStorage.getItem('barberCart');
+        if (savedCart) cart = JSON.parse(savedCart);
+
+        const savedMethod = localStorage.getItem('barber_delivery_method');
+        if (savedMethod) deliveryMethodSelect.value = savedMethod;
+
+        const savedAddress = localStorage.getItem('barber_delivery_address');
+        if (savedAddress) addressInput.value = savedAddress;
+
+        if (deliveryMethodSelect.value === 'delivery') {
+            addressGroup.style.display = 'block';
+            addressInput.required = true;
+        } else {
+            addressGroup.style.display = 'none';
+            addressInput.required = false;
+        }
+        updateUI();
+    }
+
+    deliveryMethodSelect.addEventListener('change', () => {
+        if (deliveryMethodSelect.value === 'delivery') {
+            addressGroup.style.display = 'block';
+            addressInput.required = true;
+        } else {
+            addressGroup.style.display = 'none';
+            addressInput.required = false;
+            addressInput.value = '';
+        }
+        saveCartToStorage();
+        updateUI();
+    });
+
+    addressInput.addEventListener('input', saveCartToStorage);
 
     function changeQuantity(name, action) {
         const item = cart.find(item => item.name === name);
@@ -464,16 +534,13 @@
                 cart = cart.filter(item => item.name !== name);
             }
         }
-        saveCart();
+        saveCartToStorage();
+        updateUI();
     }
 
     function removeFromCart(name) {
         cart = cart.filter(item => item.name !== name);
-        saveCart();
-    }
-
-    function saveCart() {
-        localStorage.setItem('barberCart', JSON.stringify(cart));
+        saveCartToStorage();
         updateUI();
     }
 
@@ -481,7 +548,7 @@
     window.removeFromCart = removeFromCart;
 
     function updateUI() {
-        if (!cartContainer) return;
+        if (!cartContainer || !cartCountLabel || !totalPriceLabel || !deliverySection) return;
         cartContainer.innerHTML = '';
         let total = 0;
         let totalItemsCount = 0;
@@ -490,8 +557,11 @@
             cartContainer.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">Корзина пуста</p>';
             if (cartCountLabel) cartCountLabel.innerText = '0';
             if (totalPriceLabel) totalPriceLabel.innerText = '0 ₸';
+            deliverySection.style.display = 'none';
             return;
         }
+
+        deliverySection.style.display = 'block';
 
         cart.forEach((item) => {
             const itemTotal = item.price * item.quantity;
@@ -515,6 +585,20 @@
                 </div>`;
         });
 
+        const isDelivery = deliveryMethodSelect.value === 'delivery';
+        if (isDelivery) {
+            total += DELIVERY_COST;
+            cartContainer.innerHTML += `
+                <div class="cart-item" style="border-bottom: 2px dashed var(--orange); padding-bottom: 10px; margin-top: 10px;">
+                    <div>
+                        <span class="cart-item-name" style="color: var(--orange);">🚚 Доставка курьером</span>
+                    </div>
+                    <div>
+                        <span class="cart-item-price" style="color: var(--orange);">${DELIVERY_COST.toLocaleString()} ₸</span>
+                    </div>
+                </div>`;
+        }
+
         if (cartCountLabel) cartCountLabel.innerText = totalItemsCount;
         if (totalPriceLabel) totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
     }
@@ -522,25 +606,47 @@
     if (document.getElementById('open-cart')) document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
     if (document.getElementById('close-cart')) document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
 
-    updateUI();
+    loadCartFromStorage();
 
-    // ОТПРАВКА ЗАКАЗА ИЗ КОРЗИНЫ В FIREBASE FIRESTORE
+    // ОТПРАВКА ЗАКАЗА ИЗ КОРЗИНЫ В FIREBASE FIRESTORE С УЧЕТОМ ДОСТАВКИ
     if (document.getElementById('checkout-btn')) {
         document.getElementById('checkout-btn').onclick = async () => {
             if (cart.length === 0) { alert('Ваша корзина пуста!'); return; }
+            
+            const isDelivery = deliveryMethodSelect.value === 'delivery';
+            const finalAddress = addressInput.value.trim();
+
+            if (isDelivery && !finalAddress) {
+                alert('Пожалуйста, укажите адрес доставки.');
+                addressInput.focus();
+                return;
+            }
+
             const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
             if (!phoneNumber) { alert("Оформление заказа отменено."); return; }
+            
             const orderData = {
                 phone: phoneNumber,
                 items: cart,
                 totalPrice: totalPriceLabel.innerText,
+                deliveryMethod: isDelivery ? "Доставка курьером" : "Самовывоз",
+                address: isDelivery ? finalAddress : "Не требуется (Самовывоз)",
+                deliveryCost: isDelivery ? DELIVERY_COST : 0,
                 createdAt: serverTimestamp()
             };
             try {
                 await addDoc(collection(db, 'orders'), orderData);
                 alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
                 cart = [];
-                saveCart();
+                addressInput.value = '';
+                deliveryMethodSelect.value = 'pickup';
+                addressGroup.style.display = 'none';
+                
+                localStorage.removeItem('barberCart');
+                localStorage.removeItem('barber_delivery_method');
+                localStorage.removeItem('barber_delivery_address');
+                
+                updateUI();
                 cartDrawer.classList.remove('active');
             } catch (error) {
                 console.error("Ошибка при оформлении заказа: ", error);
