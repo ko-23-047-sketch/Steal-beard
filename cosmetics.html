@@ -590,33 +590,6 @@
             await addDoc(collection(db, 'orders'), orderData);
             alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
             
-            // --- ИНТЕГРАЦИЯ С WHATSAPP ---
-            // Укажите номер вашего барбершопа (без плюсов, пробелов и скобок)
-            const BARBERSHOP_WHATSAPP = "77777262288"; 
-
-            let itemsText = "";
-            cart.forEach(item => {
-                itemsText += `• ${item.name} x${item.quantity} (${(item.price * item.quantity).toLocaleString()} ₸)\n`;
-            });
-
-            let whatsappMessage = `Добрый день! Новый заказ от ${phoneNumber}\n\n`;
-            whatsappMessage += `*Товары:*\n${itemsText}\n`;
-            whatsappMessage += `*Способ получения:* ${orderData.deliveryMethod}\n`;
-
-            if (isDelivery) {
-                whatsappMessage += `*Адрес доставки:* ${orderData.address}\n`;
-                whatsappMessage += `*Стоимость доставки:* ${DELIVERY_COST.toLocaleString()} ₸\n`;
-            } else {
-                whatsappMessage += `*Адрес самовывоза:* пр. Назарбаева 100\n`;
-            }
-
-            whatsappMessage += `\n*Итого к оплате:* ${orderData.totalPrice}`;
-
-            const encodedMessage = encodeURIComponent(whatsappMessage);
-            const whatsappUrl = `https://wa.me/${BARBERSHOP_WHATSAPP}?text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
-            // --- КОНЕЦ БЛОКА WHATSAPP ---
-            
             // Чистим хранилище после покупки
             cart = [];
             addressInput.value = '';
