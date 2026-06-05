@@ -94,9 +94,6 @@
         .cart-delivery-box select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; background: #fff; }
         .cart-address-group { margin-top: 12px; display: none; }
         .cart-address-group input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; }
-        
-        /* Информация о стоимости доставки */
-        .delivery-price-info { font-size: 13px; color: var(--orange); margin-top: 5px; font-weight: bold; }
 
         .cart-footer { padding-top: 15px; border-top: 1px solid #eee; }
         .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
@@ -389,9 +386,9 @@
         });
     });
 
-    // ЛОГИКА КОРЗИНЫ
+    // ЛОГИКА КОРЗИНЫ С СОХРАНЕНИЕМ (LOCALSTORAGE)
     let cart = [];
-    const DELIVERY_COST = 1500; // Стоимость доставки в тенге
+    const DELIVERY_COST = 1500;
     
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
@@ -403,7 +400,43 @@
     const addressGroup = document.getElementById('cart-address-group');
     const addressInput = document.getElementById('cart-customer-address');
 
-    // Отслеживание смены способа получения
+    // Функция сохранения всех параметров корзины в localStorage
+    function saveCartToStorage() {
+        localStorage.setItem('barber_cart', JSON.stringify(cart));
+        localStorage.setItem('barber_delivery_method', deliveryMethodSelect.value);
+        localStorage.setItem('barber_delivery_address', addressInput.value);
+    }
+
+    // Функция загрузки параметров корзины из localStorage
+    function loadCartFromStorage() {
+        const savedCart = localStorage.getItem('barber_cart');
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
+        }
+
+        const savedMethod = localStorage.getItem('barber_delivery_method');
+        if (savedMethod) {
+            deliveryMethodSelect.value = savedMethod;
+        }
+
+        const savedAddress = localStorage.getItem('barber_delivery_address');
+        if (savedAddress) {
+            addressInput.value = savedAddress;
+        }
+
+        // Обновляем видимость полей в зависимости от метода доставки
+        if (deliveryMethodSelect.value === 'delivery') {
+            addressGroup.style.display = 'block';
+            addressInput.required = true;
+        } else {
+            addressGroup.style.display = 'none';
+            addressInput.required = false;
+        }
+
+        updateUI();
+    }
+
+    // Отслеживание изменений в блоке доставки
     deliveryMethodSelect.addEventListener('change', () => {
         if (deliveryMethodSelect.value === 'delivery') {
             addressGroup.style.display = 'block';
@@ -413,7 +446,13 @@
             addressInput.required = false;
             addressInput.value = '';
         }
-        updateUI(); // Пересчитываем итоговую цену при изменении доставки
+        saveCartToStorage();
+        updateUI();
+    });
+
+    // Отслеживание ввода адреса на лету
+    addressInput.addEventListener('input', () => {
+        saveCartToStorage();
     });
 
     function addToCart(name, price) {
@@ -423,6 +462,7 @@
         } else {
             cart.push({ name, price, quantity: 1 });
         }
+        saveCartToStorage();
         updateUI();
         cartDrawer.classList.add('active');
     }
@@ -439,11 +479,13 @@
                 cart = cart.filter(item => item.name !== name);
             }
         }
+        saveCartToStorage();
         updateUI();
     }
 
     function removeFromCart(name) {
         cart = cart.filter(item => item.name !== name);
+        saveCartToStorage();
         updateUI();
     }
 
@@ -464,7 +506,6 @@
             return;
         }
 
-        // Показываем блок доставки, если в корзине есть вещи
         deliverySection.style.display = 'block';
 
         cart.forEach((item) => {
@@ -489,12 +530,9 @@
                 </div>`;
         });
 
-        // Добавляем стоимость доставки к итоговой цене, если выбрана «Доставка»
         const isDelivery = deliveryMethodSelect.value === 'delivery';
         if (isDelivery) {
             total += DELIVERY_COST;
-            
-            // Визуально отображаем строку доставки в списке товаров
             cartContainer.innerHTML += `
                 <div class="cart-item" style="border-bottom: 2px dashed var(--orange); padding-bottom: 10px; margin-top: 10px;">
                     <div>
@@ -512,6 +550,9 @@
 
     document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
     document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
+
+    // Запуск первичного считывания при открытии страницы
+    loadCartFromStorage();
 
     // ОФОРМЛЕНИЕ ЗАКАЗА
     document.getElementById('checkout-btn').onclick = async () => {
@@ -538,7 +579,7 @@
         const orderData = {
             phone: phoneNumber,
             items: cart,
-            totalPrice: totalPriceLabel.innerText, // Сюда уже включена доставка, если она выбрана
+            totalPrice: totalPriceLabel.innerText,
             deliveryMethod: isDelivery ? "Доставка курьером" : "Самовывоз",
             address: isDelivery ? finalAddress : "Не требуется (Самовывоз)",
             deliveryCost: isDelivery ? DELIVERY_COST : 0,
@@ -548,10 +589,16 @@
         try {
             await addDoc(collection(db, 'orders'), orderData);
             alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
+            
+            // Чистим хранилище после покупки
             cart = [];
             addressInput.value = '';
             deliveryMethodSelect.value = 'pickup';
             addressGroup.style.display = 'none';
+            localStorage.removeItem('barber_cart');
+            localStorage.removeItem('barber_delivery_method');
+            localStorage.removeItem('barber_delivery_address');
+            
             updateUI();
             cartDrawer.classList.remove('active');
         } catch (error) {
