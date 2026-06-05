@@ -34,13 +34,6 @@
         nav a:hover { color: var(--orange); }
         
         .header-actions { display: flex; align-items: center; gap: 20px; }
-        
-        /* КНОПКА КОРЗИНЫ */
-        .cart-icon-btn { background: none; border: none; color: white; cursor: pointer; position: relative; font-size: 24px; padding: 5px; display: flex; align-items: center; }
-        .cart-count { 
-            position: absolute; top: -5px; right: -8px; background: var(--orange); 
-            color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold;
-        }
 
         .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
@@ -134,33 +127,6 @@
         .step h3 { font-size: 22px; margin-bottom: 15px; border-left: 4px solid var(--orange); padding-left: 10px; }
         .step p { line-height: 1.5; color: #555; margin: 0; }
 
-        /* CART DRAWER (ВЫЕЗЖАЮЩАЯ КОРЗИНА) */
-        .cart-drawer {
-            position: fixed; top: 0; right: -420px; width: 400px; height: 100%;
-            background: white; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 35px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; box-sizing: border-box;
-        }
-        .cart-drawer.active { right: 0; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--orange); padding-bottom: 20px; margin-bottom: 20px; }
-        .cart-items { flex: 1; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; gap: 10px; }
-        .cart-item-name { font-weight: bold; font-size: 15px; margin-bottom: 5px; display: block; color: var(--dark); }
-        .cart-item-price { color: var(--orange); font-weight: bold; }
-        
-        .cart-quantity-controls {
-            display: flex; align-items: center; gap: 10px; background: #f4f4f4; padding: 5px 10px; border-radius: 8px; border: 1px solid #e0e0e0;
-        }
-        .cart-btn-qty {
-            background: transparent; color: var(--dark); border: none; font-size: 16px; font-weight: bold; cursor: pointer; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;
-        }
-        .cart-btn-qty:hover { color: var(--orange); }
-        .cart-qty-num { font-weight: bold; font-size: 14px; min-width: 15px; text-align: center; color: var(--dark); }
-        .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 5px; }
-        .cart-footer { padding-top: 25px; border-top: 1px solid #eee; }
-        .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
-        .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; transition: background-color 0.2s; }
-        .btn-checkout:hover { background-color: var(--btn-orange); }
-
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
         .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; overflow-y: auto; max-height: 90vh; }
@@ -220,9 +186,6 @@
             .about-text h2 { font-size: 32px; }
             
             .slider-arrow { width: 40px; height: 40px; font-size: 18px; }
-            .cart-drawer { width: 100%; right: -100%; padding: 25px; }
-            .cart-item { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .cart-item > div:last-child { width: 100%; justify-content: space-between; }
         }
 
         @media (max-width: 480px) {
@@ -249,7 +212,6 @@
             <a href="cosmetics.html">Косметика</a>
         </nav>
         <div class="header-actions">
-            <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
             <span class="header-phone">+7 777 726 22 88</span>
             <button class="btn-header open-modal">Записаться</button>
         </div>
@@ -329,21 +291,6 @@
         </div>
     </div>
 </section>
-
-<div class="cart-drawer" id="cart-drawer">
-    <div class="cart-header">
-        <h2 style="margin:0; color: var(--dark);">Корзина</h2>
-        <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer; color: var(--dark);">&times;</button>
-    </div>
-    <div class="cart-items" id="cart-items-container"></div>
-    <div class="cart-footer">
-        <div class="cart-total-box">
-            <span>Итого:</span>
-            <span id="cart-total-price">0 ₸</span>
-        </div>
-        <button class="btn-checkout" id="checkout-btn">Оформить заказ</button>
-    </div>
-</div>
 
 <!-- ОБНОВЛЕННОЕ МОДАЛЬНОЕ ОКНО С ПОЛНЫМ НАБОРОМ ПОЛЕЙ РАСПИСАНИЯ -->
 <div class="modal-overlay" id="modal">
@@ -526,119 +473,6 @@
         nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
         prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
         startTimer();
-    }
-
-    // ЛОГИКА СИНХРОНИЗИРОВАННОЙ КОРЗИНЫ (ЧЕРЕЗ LOCALSTORAGE)
-    let cart = JSON.parse(localStorage.getItem('barberCart')) || [];
-    const cartDrawer = document.getElementById('cart-drawer');
-    const cartContainer = document.getElementById('cart-items-container');
-    const cartCountLabel = document.getElementById('cart-count');
-    const totalPriceLabel = document.getElementById('cart-total-price');
-
-    function changeQuantity(name, action) {
-        const item = cart.find(item => item.name === name);
-        if (!item) return;
-
-        if (action === 'increase') {
-            item.quantity += 1;
-        } else if (action === 'decrease') {
-            item.quantity -= 1;
-            if (item.quantity <= 0) {
-                cart = cart.filter(item => item.name !== name);
-            }
-        }
-        saveCart();
-    }
-
-    function removeFromCart(name) {
-        cart = cart.filter(item => item.name !== name);
-        saveCart();
-    }
-
-    function saveCart() {
-        localStorage.setItem('barberCart', JSON.stringify(cart));
-        updateUI();
-    }
-
-    window.changeQuantity = changeQuantity;
-    window.removeFromCart = removeFromCart;
-
-    function updateUI() {
-        if (!cartContainer) return;
-        cartContainer.innerHTML = '';
-        let total = 0;
-        let totalItemsCount = 0;
-
-        if (cart.length === 0) {
-            cartContainer.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">Корзина пуста</p>';
-            if (cartCountLabel) cartCountLabel.innerText = '0';
-            if (totalPriceLabel) totalPriceLabel.innerText = '0 ₸';
-            return;
-        }
-
-        cart.forEach((item) => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
-            totalItemsCount += item.quantity;
-
-            cartContainer.innerHTML += `
-                <div class="cart-item">
-                    <div>
-                        <span class="cart-item-name">${item.name}</span>
-                        <span class="cart-item-price">${itemTotal.toLocaleString()} ₸</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div class="cart-quantity-controls">
-                            <button class="cart-btn-qty" onclick="changeQuantity('${item.name}', 'decrease')">-</button>
-                            <span class="cart-qty-num">${item.quantity}</span>
-                            <button class="cart-btn-qty" onclick="changeQuantity('${item.name}', 'increase')">+</button>
-                        </div>
-                        <button class="btn-remove-item" onclick="removeFromCart('${item.name}')">&times;</button>
-                    </div>
-                </div>`;
-        });
-
-        if (cartCountLabel) cartCountLabel.innerText = totalItemsCount;
-        if (totalPriceLabel) totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
-    }
-
-    if (document.getElementById('open-cart')) document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
-    if (document.getElementById('close-cart')) document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
-
-    updateUI();
-
-    // ОТПРАВКА ЗАКАЗА ИЗ КОРЗИНЫ В FIREBASE FIRESTORE
-    if (document.getElementById('checkout-btn')) {
-        document.getElementById('checkout-btn').onclick = async () => {
-            if (cart.length === 0) {
-                alert('Ваша корзина пуста!');
-                return;
-            }
-
-            const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
-            if (!phoneNumber) {
-                alert("Оформление заказа отменено.");
-                return;
-            }
-
-            const orderData = {
-                phone: phoneNumber,
-                items: cart,
-                totalPrice: totalPriceLabel.innerText,
-                createdAt: serverTimestamp()
-            };
-
-            try {
-                await addDoc(collection(db, 'orders'), orderData);
-                alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
-                cart = [];
-                saveCart();
-                cartDrawer.classList.remove('active');
-            } catch (error) {
-                console.error("Ошибка при оформлении заказа: ", error);
-                alert('Не удалось отправить заказ. Попробуйте еще раз.');
-            }
-        };
     }
 
     // --- БАЗА ДАННЫХ И НАСТРОЙКИ СВЯЗАННЫХ СПИСКОВ ЗАПИСИ ---
