@@ -94,6 +94,9 @@
         .cart-delivery-box select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; background: #fff; }
         .cart-address-group { margin-top: 12px; display: none; }
         .cart-address-group input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; }
+        
+        /* Информация о стоимости доставки */
+        .delivery-price-info { font-size: 13px; color: var(--orange); margin-top: 5px; font-weight: bold; }
 
         .cart-footer { padding-top: 15px; border-top: 1px solid #eee; }
         .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
@@ -250,12 +253,11 @@
     </div>
     <div class="cart-items" id="cart-items-container"></div>
     
-    <!-- БЛОК ДОСТАВКИ -->
     <div class="cart-delivery-box" id="cart-delivery-section" style="display: none;">
         <label for="cart-delivery-method">Способ получения</label>
         <select id="cart-delivery-method">
             <option value="pickup">Самовывоз (пр. Назарбаева 100)</option>
-            <option value="delivery">Доставка курьером</option>
+            <option value="delivery">Доставка курьером (+1 500 ₸)</option>
         </select>
         <div class="cart-address-group" id="cart-address-group">
             <label for="cart-customer-address">Адрес доставки</label>
@@ -389,6 +391,8 @@
 
     // ЛОГИКА КОРЗИНЫ
     let cart = [];
+    const DELIVERY_COST = 1500; // Стоимость доставки в тенге
+    
     const cartDrawer = document.getElementById('cart-drawer');
     const cartContainer = document.getElementById('cart-items-container');
     const cartCountLabel = document.getElementById('cart-count');
@@ -409,6 +413,7 @@
             addressInput.required = false;
             addressInput.value = '';
         }
+        updateUI(); // Пересчитываем итоговую цену при изменении доставки
     });
 
     function addToCart(name, price) {
@@ -455,11 +460,11 @@
             cartContainer.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">Корзина пуста</p>';
             cartCountLabel.innerText = '0';
             totalPriceLabel.innerText = '0 ₸';
-            deliverySection.style.display = 'none'; // Скрываем доставку, если пусто
+            deliverySection.style.display = 'none';
             return;
         }
 
-        // Показываем блок доставки, если есть товары
+        // Показываем блок доставки, если в корзине есть вещи
         deliverySection.style.display = 'block';
 
         cart.forEach((item) => {
@@ -484,6 +489,23 @@
                 </div>`;
         });
 
+        // Добавляем стоимость доставки к итоговой цене, если выбрана «Доставка»
+        const isDelivery = deliveryMethodSelect.value === 'delivery';
+        if (isDelivery) {
+            total += DELIVERY_COST;
+            
+            // Визуально отображаем строку доставки в списке товаров
+            cartContainer.innerHTML += `
+                <div class="cart-item" style="border-bottom: 2px dashed var(--orange); padding-bottom: 10px; margin-top: 10px;">
+                    <div>
+                        <span class="cart-item-name" style="color: var(--orange);">🚚 Доставка курьером</span>
+                    </div>
+                    <div>
+                        <span class="cart-item-price" style="color: var(--orange);">${DELIVERY_COST.toLocaleString()} ₸</span>
+                    </div>
+                </div>`;
+        }
+
         cartCountLabel.innerText = totalItemsCount;
         totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
     }
@@ -491,7 +513,7 @@
     document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
     document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
 
-    // ОФОРМЛЕНИЕ ЗАКАЗА С УЧЕТОМ ДОСТАВКИ
+    // ОФОРМЛЕНИЕ ЗАКАЗА
     document.getElementById('checkout-btn').onclick = async () => {
         if (cart.length === 0) {
             alert('Ваша корзина пуста!');
@@ -501,7 +523,6 @@
         const isDelivery = deliveryMethodSelect.value === 'delivery';
         const finalAddress = addressInput.value.trim();
 
-        // Валидация адреса перед запросом телефона
         if (isDelivery && !finalAddress) {
             alert('Пожалуйста, укажите адрес доставки.');
             addressInput.focus();
@@ -517,9 +538,10 @@
         const orderData = {
             phone: phoneNumber,
             items: cart,
-            totalPrice: totalPriceLabel.innerText,
+            totalPrice: totalPriceLabel.innerText, // Сюда уже включена доставка, если она выбрана
             deliveryMethod: isDelivery ? "Доставка курьером" : "Самовывоз",
             address: isDelivery ? finalAddress : "Не требуется (Самовывоз)",
+            deliveryCost: isDelivery ? DELIVERY_COST : 0,
             createdAt: serverTimestamp()
         };
 
