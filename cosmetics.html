@@ -44,7 +44,7 @@
         .btn-header:hover { background-color: var(--btn-orange); }
 
         /* Бургер-меню для мобилок */
-        .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
+        .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1010; }
         .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
 
         /* COSMETICS GRID */
@@ -87,21 +87,28 @@
         .cart-qty-num { font-weight: bold; font-size: 14px; min-width: 15px; text-align: center; color: var(--dark); }
 
         .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 5px; }
-        .cart-footer { padding-top: 25px; border-top: 1px solid #eee; }
+        
+        /* Блок выбора доставки в корзине */
+        .cart-delivery-box { margin: 15px 0; border-top: 1px solid #eee; padding-top: 15px; }
+        .cart-delivery-box label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: var(--dark); }
+        .cart-delivery-box select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; background: #fff; }
+        .cart-address-group { margin-top: 12px; display: none; }
+        .cart-address-group input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; }
+
+        .cart-footer { padding-top: 15px; border-top: 1px solid #eee; }
         .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
         .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; transition: background-color 0.2s; }
         .btn-checkout:hover { background-color: var(--btn-orange); }
 
         /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
-        /* Добавлена прокрутка модального окна для вмещения новых полей */
         .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; overflow-y: auto; max-height: 90vh; }
         .modal-close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
 
-        /* Блок расписания мастера из прошлого кода */
+        /* Блок расписания мастера */
         .schedule-info-box { background: #2a2a2a; border-left: 4px solid var(--orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; display: none; }
         .schedule-info-box .title { font-weight: bold; color: var(--orange); margin-bottom: 4px; }
 
@@ -242,6 +249,20 @@
         <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer; color: var(--dark);">&times;</button>
     </div>
     <div class="cart-items" id="cart-items-container"></div>
+    
+    <!-- БЛОК ДОСТАВКИ -->
+    <div class="cart-delivery-box" id="cart-delivery-section" style="display: none;">
+        <label for="cart-delivery-method">Способ получения</label>
+        <select id="cart-delivery-method">
+            <option value="pickup">Самовывоз (пр. Назарбаева 100)</option>
+            <option value="delivery">Доставка курьером</option>
+        </select>
+        <div class="cart-address-group" id="cart-address-group">
+            <label for="cart-customer-address">Адрес доставки</label>
+            <input type="text" id="cart-customer-address" placeholder="Город, улица, дом, квартира">
+        </div>
+    </div>
+
     <div class="cart-footer">
         <div class="cart-total-box">
             <span>Итого:</span>
@@ -254,7 +275,7 @@
 <div class="modal-overlay" id="modal">
     <div class="modal-content">
         <span class="modal-close" id="close-modal">&times;</span>
-        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Онлайн-запись</h2>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Online-запись</h2>
         <form id="booking-form">
             <div class="form-group">
                 <label>Ваше имя</label>
@@ -295,13 +316,11 @@
                 </select>
             </div>
 
-            <!-- Блок визуализации графика выбранного мастера (из первого кода) -->
             <div class="schedule-info-box" id="schedule-box">
                 <div class="title">График работы мастера:</div>
                 <div id="schedule-text">Понедельник — Пятница, 10:00 - 21:00</div>
             </div>
 
-            <!-- Поля дня недели и времени -->
             <div class="form-group">
                 <label>День недели</label>
                 <select id="select-day" required disabled>
@@ -337,7 +356,6 @@
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-    // Конфигурация Firebase сохраненная из исходного кода
     const firebaseConfig = {
         apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
         authDomain: "diplom-f94fb.firebaseapp.com",
@@ -348,7 +366,6 @@
         measurementId: "G-139BDNRX6Q"
     };
 
-    // Инициализация сервисов
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
@@ -376,6 +393,23 @@
     const cartContainer = document.getElementById('cart-items-container');
     const cartCountLabel = document.getElementById('cart-count');
     const totalPriceLabel = document.getElementById('cart-total-price');
+    
+    const deliverySection = document.getElementById('cart-delivery-section');
+    const deliveryMethodSelect = document.getElementById('cart-delivery-method');
+    const addressGroup = document.getElementById('cart-address-group');
+    const addressInput = document.getElementById('cart-customer-address');
+
+    // Отслеживание смены способа получения
+    deliveryMethodSelect.addEventListener('change', () => {
+        if (deliveryMethodSelect.value === 'delivery') {
+            addressGroup.style.display = 'block';
+            addressInput.required = true;
+        } else {
+            addressGroup.style.display = 'none';
+            addressInput.required = false;
+            addressInput.value = '';
+        }
+    });
 
     function addToCart(name, price) {
         const existingItem = cart.find(item => item.name === name);
@@ -421,8 +455,12 @@
             cartContainer.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">Корзина пуста</p>';
             cartCountLabel.innerText = '0';
             totalPriceLabel.innerText = '0 ₸';
+            deliverySection.style.display = 'none'; // Скрываем доставку, если пусто
             return;
         }
+
+        // Показываем блок доставки, если есть товары
+        deliverySection.style.display = 'block';
 
         cart.forEach((item) => {
             const itemTotal = item.price * item.quantity;
@@ -453,10 +491,20 @@
     document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
     document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
 
-    // ИНТЕГРАЦИЯ КОРЗИНЫ С FIREBASE (ПОКУПКА)
+    // ОФОРМЛЕНИЕ ЗАКАЗА С УЧЕТОМ ДОСТАВКИ
     document.getElementById('checkout-btn').onclick = async () => {
         if (cart.length === 0) {
             alert('Ваша корзина пуста!');
+            return;
+        }
+
+        const isDelivery = deliveryMethodSelect.value === 'delivery';
+        const finalAddress = addressInput.value.trim();
+
+        // Валидация адреса перед запросом телефона
+        if (isDelivery && !finalAddress) {
+            alert('Пожалуйста, укажите адрес доставки.');
+            addressInput.focus();
             return;
         }
 
@@ -470,6 +518,8 @@
             phone: phoneNumber,
             items: cart,
             totalPrice: totalPriceLabel.innerText,
+            deliveryMethod: isDelivery ? "Доставка курьером" : "Самовывоз",
+            address: isDelivery ? finalAddress : "Не требуется (Самовывоз)",
             createdAt: serverTimestamp()
         };
 
@@ -477,6 +527,9 @@
             await addDoc(collection(db, 'orders'), orderData);
             alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
             cart = [];
+            addressInput.value = '';
+            deliveryMethodSelect.value = 'pickup';
+            addressGroup.style.display = 'none';
             updateUI();
             cartDrawer.classList.remove('active');
         } catch (error) {
@@ -486,8 +539,7 @@
     };
 
 
-    // === НОВАЯ ПРОДВИНУТАЯ СИСТЕМА ОНЛАЙН-ЗАПИСИ (ИЗ ПРОШЛОГО КОДА) ===
-
+    // === СИСТЕМА ОНЛАЙН-ЗАПИСИ ===
     const priceList = {
         haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
         beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
@@ -668,7 +720,6 @@
     selectDay.addEventListener('change', handleDayChange);
     selectService.addEventListener('change', updatePrice);
 
-    // ОТПРАВКА ДАННЫХ В FIREBASE (ОНЛАЙН-ЗАПИСЬ)
     document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
         
@@ -684,7 +735,6 @@
         const bookingDay = selectDay.value;
         const bookingTime = selectTime.value;
 
-        // Сохранено в соответствии с исходным кодом в коллекцию 'bookings'
         const bookingData = {
             name: name,
             phone: phone,
