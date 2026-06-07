@@ -149,7 +149,7 @@
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; }
 
-        /* --- НОВЫЕ СТИЛИ ДЛЯ ВНУТРЕННЕЙ ПОЧТЫ УВЕДОМЛЕНИЙ --- */
+        /* --- СТИЛИ ДЛЯ ВНУТРЕННЕЙ ПОЧТЫ (УВЕДОМЛЕНИЙ) --- */
         .mail-btn-container {
             position: relative;
             display: flex;
@@ -487,8 +487,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-    // Добавлены onSnapshot, query, orderBy для работы почты в реальном времени
-    import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
     // Конфигурация Firebase
     const firebaseConfig = {
@@ -639,7 +638,7 @@
     const priceOutput = document.getElementById('price-output');
     const submitBtn = document.getElementById('submitBtn');
 
-    // КЛИК НА КНОПКИ ОТКРЫТИЯ МОДАЛКИ
+    // КЛИК НА КНОПКИ ОТКРЫТИЯ МОДАЛКИ ЗАПИСИ
     document.querySelectorAll('.open-modal').forEach(button => {
         button.onclick = (e) => {
             modal.style.display = 'flex';
@@ -687,7 +686,7 @@
         if (scheduleBox) scheduleBox.style.display = 'none';
 
         if (!rank) {
-            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
+            selectMaster.innerHTML = '<option value="">Сначала выберите kategoriю</option>';
             return;
         }
 
@@ -778,7 +777,7 @@
     selectDay.addEventListener('change', handleDayChange);
     selectService.addEventListener('change', updatePrice);
 
-    // ОТПРАВКА ДАННЫХ В FIREBASE (ОБНОВЛЕННАЯ С ДНЕМ И ВРЕМЕНЕМ)
+    // ОТПРАВКА ФОРМЫ В FIREBASE С ПОЛНЫМ ПОДТВЕРЖДЕНИЕМ И АДРЕСОМ
     document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
         
@@ -797,7 +796,7 @@
         const bookingTime = selectTime.value;
 
         try {
-            // Сохраняем бронирование в Firebase Firestore (в ту же коллекцию 'appointments')
+            // Запись данных в Firebase
             await addDoc(collection(db, "appointments"), {
                 clientName: name,
                 clientPhone: phone,
@@ -810,7 +809,16 @@
                 createdAt: new Date().toISOString()
             });
 
-            alert(`Запись успешно создана!\nЖдем вас в ${bookingDay} в ${bookingTime}.`);
+            // КРАСИВОЕ ОКНО ПОДТВЕРЖДЕНИЯ С АДРЕСОМ ДЛЯ КЛИЕНТА
+            alert(
+                `Вы успешно записаны на стрижку!\n\n` +
+                `📅 Когда: ${bookingDay} в ${bookingTime}\n` +
+                `💈 Мастер: ${master}\n` +
+                `💵 Стоимость: ${currentPriceValue.toLocaleString('ru-RU')} ₸\n\n` +
+                `📍 Наш адрес: г. Алматы, пр. Назарбаева 100\n` +
+                `Ждем вас! Если ваши планы изменятся, пожалуйста, предупредите нас.`
+            );
+
             close();
             document.getElementById('booking-form').reset();
             updatePrice();
@@ -851,7 +859,7 @@
     openMailBtn.onclick = () => {
         mailModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        mailBadge.style.display = 'none'; // Сбрасываем счетчик при просмотре
+        mailBadge.style.display = 'none'; 
     };
     closeMailModal.onclick = () => {
         mailModal.style.display = 'none';
@@ -864,7 +872,6 @@
         }
     });
 
-    // Переключение вкладок в интерфейсе почты
     tabHaircuts.onclick = () => { switchTab('haircuts'); };
     tabCosmetics.onclick = () => { switchTab('cosmetics'); };
 
@@ -884,6 +891,8 @@
         });
         countHaircuts.textContent = dataHaircuts.length;
         updateBadgeAndRender();
+    }, (error) => {
+        console.log("Если стрижки не приходят, проверь правила Firestore Rules или создай индекс через ссылку в ошибке консоли браузера.", error);
     });
 
     // Слушаем в реальном времени коллекцию 'cosmetics_orders' (заказы косметики)
@@ -896,10 +905,9 @@
         countCosmetics.textContent = dataCosmetics.length;
         updateBadgeAndRender();
     }, (err) => {
-        console.log("Коллекция 'cosmetics_orders' пока пуста или не создана.");
+        console.log("Коллекция 'cosmetics_orders' пока пуста или еще не создана.");
     });
 
-    // Функция обновления красного бейджа новых уведомлений
     function updateBadgeAndRender() {
         const totalNotifications = dataHaircuts.length + dataCosmetics.length;
         if (totalNotifications > 0 && mailModal.style.display !== 'flex') {
@@ -909,7 +917,6 @@
         renderMail();
     }
 
-    // Отрисовка списка уведомлений в выбранной вкладке
     function renderMail() {
         mailListContainer.innerHTML = '';
         const list = currentTab === 'haircuts' ? dataHaircuts : dataCosmetics;
