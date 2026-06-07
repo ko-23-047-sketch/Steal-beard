@@ -263,7 +263,6 @@
         <div class="header-actions">
             <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
             
-            <!-- СИСТЕМНАЯ КНОПКА ПОЧТЫ ДОБАВЛЕНА РЯДОМ -->
             <div class="mail-btn-container">
                 <button class="btn-mail" id="openMailBtn">✉</button>
                 <div class="mail-badge" id="mailBadge">0</div>
@@ -443,7 +442,6 @@
     </div>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОЧТЫ -->
 <div class="modal-overlay" id="mailModal">
     <div class="modal-content" style="max-width: 600px;">
         <span class="modal-close" id="closeMailModal">&times;</span>
@@ -467,7 +465,6 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-    // Добавлены onSnapshot, query, orderBy для работы почты в реальном времени
     import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -663,7 +660,7 @@
 
     loadCartFromStorage();
 
-    // ОФОРМЛЕНИЕ ЗАКАЗА (ОТПРАВЛЯЕТ В КОЛЛЕКЦИЮ cosmetics_orders ДЛЯ КОРРЕКТНОЙ СВЯЗИ С ПОЧТОЙ)
+    // ОФОРМЛЕНИЕ ЗАКАЗА
     document.getElementById('checkout-btn').onclick = async () => {
         if (cart.length === 0) {
             alert('Ваша корзина пуста!');
@@ -1047,12 +1044,28 @@
                     </div>
                 `;
             } else {
+                // Динамическое определение отображения адреса и времени доставки
+                let deliveryDetails = '';
+                if (item.deliveryMethod === "Доставка курьером") {
+                    deliveryDetails = `
+                        <b>Способ получения:</b> ${item.deliveryMethod}<br>
+                        <b>Адрес доставки:</b> ${item.address || 'Не указан'}<br>
+                        <b>Время доставки:</b> в течение 5 часов максимум<br>
+                    `;
+                } else {
+                    deliveryDetails = `
+                        <b>Способ получения:</b> ${item.deliveryMethod}<br>
+                        <b>Адрес самовывоза:</b> пр. Назарбаева 100<br>
+                    `;
+                }
+
                 html = `
                     <div class="mail-item" style="border-left-color: #25d366;">
                         <span class="mail-date">${date}</span>
                         <strong>Новый заказ косметики!</strong><br>
                         <b>Клиент:</b> ${item.clientName || 'Не указано'} (${item.clientPhone || 'Нет номера'})<br>
                         <b>Товары:</b> ${item.products || 'Список пуст'}<br>
+                        ${deliveryDetails}
                         <b>Сумма заказа:</b> ${item.totalPrice ? item.totalPrice.toLocaleString('ru-RU') : 0} ₸
                     </div>
                 `;
