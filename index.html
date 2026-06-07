@@ -473,8 +473,7 @@
             <div class="mail-tab" id="tabCosmetics">Косметика (<span id="countCosmetics">0</span>)</div>
         </div>
 
-        <div class="mail-list" id="mailListContainer">
-            </div>
+        <div class="mail-list" id="mailListContainer"></div>
     </div>
 </div>
 
@@ -657,7 +656,7 @@
                 handleMasterChange();
             } else {
                 updateMastersList();
-                scheduleBox.style.display = 'none';
+                if (scheduleBox) scheduleBox.style.display = 'none';
             }
             
             updatePrice();
@@ -686,7 +685,7 @@
         if (scheduleBox) scheduleBox.style.display = 'none';
 
         if (!rank) {
-            selectMaster.innerHTML = '<option value="">Сначала выберите kategoriю</option>';
+            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
             return;
         }
 
@@ -796,7 +795,6 @@
         const bookingTime = selectTime.value;
 
         try {
-            // Запись данных в Firebase
             await addDoc(collection(db, "appointments"), {
                 clientName: name,
                 clientPhone: phone,
@@ -809,7 +807,6 @@
                 createdAt: new Date().toISOString()
             });
 
-            // КРАСИВОЕ ОКНО ПОДТВЕРЖДЕНИЯ С АДРЕСОМ ДЛЯ КЛИЕНТА
             alert(
                 `Вы успешно записаны на стрижку!\n\n` +
                 `📅 Когда: ${bookingDay} в ${bookingTime}\n` +
@@ -836,7 +833,6 @@
         }
     };
 
-
     // ========================================================
     // --- ЛОГИКА ВНУТРЕННЕЙ ПОЧТЫ (УВЕДОМЛЕНИЙ АДМИНИСТРАТОРА) ---
     // ========================================================
@@ -855,7 +851,6 @@
     let dataHaircuts = [];
     let dataCosmetics = [];
 
-    // Открытие / Закрытие почты
     openMailBtn.onclick = () => {
         mailModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -892,7 +887,7 @@
         countHaircuts.textContent = dataHaircuts.length;
         updateBadgeAndRender();
     }, (error) => {
-        console.log("Если стрижки не приходят, проверь правила Firestore Rules или создай индекс через ссылку в ошибке консоли браузера.", error);
+        console.log("Ошибка загрузки коллекции appointments:", error);
     });
 
     // Слушаем в реальном времени коллекцию 'cosmetics_orders' (заказы косметики)
@@ -943,12 +938,27 @@
                     </div>
                 `;
             } else {
+                let deliveryDetails = '';
+                if (item.deliveryMethod === "Доставка курьером") {
+                    deliveryDetails = `
+                        <b>Способ получения:</b> ${item.deliveryMethod}<br>
+                        <b>Адрес доставки:</b> ${item.address || 'Не указан'}<br>
+                        <b>Время доставки:</b> в течение 5 часов<br>
+                    `;
+                } else {
+                    deliveryDetails = `
+                        <b>Способ получения:</b> ${item.deliveryMethod || 'Самовывоз'}<br>
+                        <b>Адрес самовывоза:</b> пр. Назарбаева 100<br>
+                    `;
+                }
+
                 html = `
                     <div class="mail-item" style="border-left-color: #25d366;">
                         <span class="mail-date">${date}</span>
                         <strong>Новый заказ косметики!</strong><br>
                         <b>Клиент:</b> ${item.clientName || 'Не указано'} (${item.clientPhone || 'Нет номера'})<br>
                         <b>Товары:</b> ${item.products || 'Список пуст'}<br>
+                        ${deliveryDetails}
                         <b>Сумма заказа:</b> ${item.totalPrice ? item.totalPrice.toLocaleString('ru-RU') : 0} ₸
                     </div>
                 `;
