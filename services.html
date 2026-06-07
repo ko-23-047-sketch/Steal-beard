@@ -577,7 +577,7 @@
         if (scheduleBox) scheduleBox.style.display = 'none';
 
         if (!rank) {
-            selectMaster.innerHTML = '<option value="">Сначала выберите категории</option>';
+            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
             return;
         }
 
@@ -735,7 +735,7 @@
     openMailBtn.onclick = () => {
         mailModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        mailBadge.style.display = 'none'; // Сбрасываем счетчик при просмотре
+        mailBadge.style.display = 'none'; 
     };
     closeMailModal.onclick = () => {
         mailModal.style.display = 'none';
@@ -793,7 +793,7 @@
         renderMail();
     }
 
-    // Отрисовка списка уведомлений в выбранной вкладке
+    // Отрисовка списка уведомлений во внутренней корзине / почте
     function renderMail() {
         mailListContainer.innerHTML = '';
         const list = currentTab === 'haircuts' ? dataHaircuts : dataCosmetics;
@@ -820,12 +820,28 @@
                     </div>
                 `;
             } else {
+                // Динамическое определение адреса и условий внутренней корзины при заказе косметики
+                let deliveryDetails = '';
+                if (item.deliveryMethod === "Доставка курьером") {
+                    deliveryDetails = `
+                        <b>Способ получения:</b> ${item.deliveryMethod}<br>
+                        <b>Адрес доставки:</b> ${item.address || 'Не указан'}<br>
+                        <b>Время доставки:</b> в течение 5 часов<br>
+                    `;
+                } else {
+                    deliveryDetails = `
+                        <b>Способ получения:</b> ${item.deliveryMethod || 'Самовывоз'}<br>
+                        <b>Адрес самовывоза:</b> пр. Назарбаева 100<br>
+                    `;
+                }
+
                 html = `
                     <div class="mail-item" style="border-left-color: #25d366;">
                         <span class="mail-date">${date}</span>
                         <strong>Новый заказ косметики!</strong><br>
                         <b>Клиент:</b> ${item.clientName || 'Не указано'} (${item.clientPhone || 'Нет номера'})<br>
                         <b>Товары:</b> ${item.products || 'Список пуст'}<br>
+                        ${deliveryDetails}
                         <b>Сумма заказа:</b> ${item.totalPrice ? item.totalPrice.toLocaleString('ru-RU') : 0} ₸
                     </div>
                 `;
