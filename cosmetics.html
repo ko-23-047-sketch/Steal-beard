@@ -31,89 +31,98 @@
         
         nav { display: flex; }
         nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: bold; font-size: 14px; transition: color 0.3s; }
-        nav a:hover { color: var(--orange); }
-        nav a.active { color: var(--orange); }
+        nav a:hover, nav a.active { color: var(--orange); }
         
         .header-actions { display: flex; align-items: center; gap: 20px; }
-
+        .cart-icon-btn { background: none; border: none; color: white; cursor: pointer; position: relative; font-size: 24px; padding: 5px; display: flex; align-items: center; }
+        .cart-count { 
+            position: absolute; top: -5px; right: -8px; background: var(--orange); 
+            color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold;
+        }
         .header-phone { font-weight: bold; font-size: 16px; white-space: nowrap; }
         .btn-header { background-color: var(--orange); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: background-color 0.3s; }
         .btn-header:hover { background-color: var(--btn-orange); }
 
         /* Бургер-меню для мобилок */
-        .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1001; }
+        .burger-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; z-index: 1010; }
         .burger-menu span { display: block; width: 25px; height: 3px; background-color: white; transition: 0.3s; }
 
-        /* СТРАНИЦА КОСМЕТИКИ */
-        .page-title { font-size: 42px; text-transform: uppercase; margin: 50px 0 30px; border-left: 6px solid var(--orange); padding-left: 20px; font-family: 'Georgia', serif; }
+        /* COSMETICS GRID */
+        .section-title { font-size: 36px; margin: 60px 0 40px; border-left: 6px solid var(--orange); padding-left: 20px; text-transform: uppercase; }
         
-        .cosmetics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 80px; }
-        .product-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: transform 0.3s; border: 1px solid #eee; }
-        .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 280px; object-fit: cover; background-color: #f9f9f9; }
-        .product-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-brand { font-size: 12px; text-transform: uppercase; color: var(--orange); font-weight: bold; margin-bottom: 5px; }
-        .product-title { font-size: 20px; margin: 0 0 10px; font-weight: bold; color: var(--dark); }
-        .product-desc { font-size: 14px; color: #666; line-height: 1.4; margin: 0 0 20px; flex-grow: 1; }
-        .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-        .product-price { font-size: 22px; font-weight: bold; color: var(--dark); }
-        .btn-buy { background-color: var(--dark); color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-buy:hover { background-color: var(--orange); }
-
-        /* КОРЗИНА И ОФОРМЛЕНИЕ */
-        .cart-section { background: var(--light-grey); padding: 60px 0; border-top: 1px solid #ddd; }
-        .cart-box { background: white; padding: 40px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .cart-title { font-size: 28px; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; color: var(--dark); }
+        .cosm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; margin: 40px 0; }
+        .prod-card { background: var(--light-grey); padding: 25px; border-radius: 30px; text-align: center; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
         
-        .cart-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: left; }
-        .cart-table th { padding: 15px; border-bottom: 2px solid #ddd; text-transform: uppercase; font-size: 13px; color: #777; }
-        .cart-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        @media (hover: hover) {
+            .prod-card:hover { transform: translateY(-10px); }
+        }
         
-        .cart-item-title { font-weight: bold; font-size: 16px; }
-        .cart-count-btn { background: #eee; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .cart-count-btn:hover { background: var(--orange); color: white; }
-        .cart-count-val { margin: 0 12px; font-weight: bold; display: inline-block; min-width: 20px; text-align: center; }
-        .cart-remove-btn { background: none; border: none; color: #cc0000; cursor: pointer; font-size: 20px; }
+        .prod-img-box { height: 220px; background: white; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px; box-sizing: border-box; }
+        .prod-img-box img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; }
+        .prod-card p { font-weight: bold; font-size: 16px; margin: 10px 0; min-height: 40px; display: flex; align-items: center; justify-content: center; color: var(--dark); }
+        .prod-price { color: var(--orange); font-weight: bold; font-size: 20px; display: block; margin-bottom: 15px; }
+        .btn-add-cart { background: var(--orange); color: white; border: none; width: 100%; padding: 14px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: auto; transition: background-color 0.2s; }
+        .btn-add-cart:hover { background-color: var(--btn-orange); }
 
-        .cart-summary { display: flex; justify-content: space-between; align-items: center; background: var(--dark); color: white; padding: 25px 30px; border-radius: 20px; margin-bottom: 40px; }
-        .cart-total-label { font-size: 18px; text-transform: uppercase; font-weight: bold; }
-        .cart-total-val { font-size: 28px; font-weight: bold; color: var(--orange); }
+        /* CART DRAWER */
+        .cart-drawer {
+            position: fixed; top: 0; right: -420px; width: 400px; height: 100%;
+            background: white; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 35px; box-sizing: border-box;
+            display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+        .cart-drawer.active { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--orange); padding-bottom: 20px; margin-bottom: 20px; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; gap: 10px; }
+        .cart-item-name { font-weight: bold; font-size: 15px; margin-bottom: 5px; display: block; color: var(--dark); }
+        .cart-item-price { color: var(--orange); font-weight: bold; }
+        
+        .cart-quantity-controls {
+            display: flex; align-items: center; gap: 10px; background: #f4f4f4; padding: 5px 10px; border-radius: 8px; border: 1px solid #e0e0e0;
+        }
+        .cart-btn-qty {
+            background: transparent; color: var(--dark); border: none; font-size: 16px; font-weight: bold; cursor: pointer; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;
+        }
+        .cart-btn-qty:hover { color: var(--orange); }
+        .cart-qty-num { font-weight: bold; font-size: 14px; min-width: 15px; text-align: center; color: var(--dark); }
 
-        /* ФОРМА ЗАКАЗА КОРЗИНЫ */
-        .order-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: bold; }
-        .form-group input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; background: #fafafa; }
-        .form-group input:focus { border-color: var(--orange); outline: none; background: white; }
-        .btn-order-submit { grid-column: span 2; background: var(--orange); color: white; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; text-transform: uppercase; transition: background-color 0.3s; margin-top: 10px; }
-        .btn-order-submit:hover { background-color: var(--btn-orange); }
-        .btn-order-submit:disabled { background: #aaa; cursor: not-allowed; }
+        .btn-remove-item { color: #ff4d4d; background: none; border: none; font-size: 22px; cursor: pointer; padding: 0 5px; }
+        
+        /* Блок выбора доставки в корзине */
+        .cart-delivery-box { margin: 15px 0; border-top: 1px solid #eee; padding-top: 15px; }
+        .cart-delivery-box label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 8px; color: var(--dark); }
+        .cart-delivery-box select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; background: #fff; }
+        .cart-address-group { margin-top: 12px; display: none; }
+        .cart-address-group input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; }
 
-        /* MODAL COMMON */
+        .cart-footer { padding-top: 15px; border-top: 1px solid #eee; }
+        .cart-total-box { display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; margin-bottom: 25px; color: var(--dark); }
+        .btn-checkout { background: var(--orange); color: white; border: none; width: 100%; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; transition: background-color 0.2s; }
+        .btn-checkout:hover { background-color: var(--btn-orange); }
+
+        /* MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; }
         .modal-content { background: var(--dark); color: white; padding: 40px 30px; border-radius: 35px; width: 100%; max-width: 450px; position: relative; border: 2px solid var(--orange); box-shadow: 0 0 40px rgba(255, 117, 31, 0.3); box-sizing: border-box; overflow-y: auto; max-height: 90vh; }
         .modal-close { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #fff; }
-        
-        .modal-title { font-family: 'Georgia', serif; font-size: 26px; text-transform: uppercase; color: var(--orange); margin-top: 0; margin-bottom: 25px; text-align: center; font-weight: normal; letter-spacing: 1px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #aaa; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; font-size: 16px; box-sizing: border-box; }
 
-        /* FORM INSIDE MODAL */
-        .booking-form .form-group { margin-bottom: 18px; }
-        .booking-form label { display: block; font-size: 12px; text-transform: uppercase; color: #aaa; margin-bottom: 6px; font-weight: bold; letter-spacing: 1px; }
-        .booking-form input, .booking-form select { width: 100%; background: #222; border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; transition: border-color 0.3s; }
-        .booking-form input:focus, .booking-form select:focus { border-color: var(--orange); outline: none; }
-        .booking-form select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='white'><polygon points='0,0 10,0 5,5'/></svg>"); background-repeat: no-repeat; background-position: right 15px center; }
-        
-        .price-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin: 25px 0 20px; }
-        .price-label { font-size: 12px; text-transform: uppercase; color: #aaa; margin-bottom: 3px; }
-        .price-amount { font-size: 26px; font-weight: bold; color: var(--orange); }
+        /* Блок расписания мастера */
+        .schedule-info-box { background: #2a2a2a; border-left: 4px solid var(--orange); padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; display: none; }
+        .schedule-info-box .title { font-weight: bold; color: var(--orange); margin-bottom: 4px; }
 
-        .btn-submit { background: var(--orange); color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: background-color 0.3s; }
-        .btn-submit:hover { background-color: var(--btn-orange); }
+        /* Блок стоимости */
+        .price-display-box { background: #222; border: 1px dashed var(--orange); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .price-display-title { font-size: 14px; color: #aaa; margin-bottom: 5px; text-transform: uppercase; }
+        .price-display-val { font-size: 24px; font-weight: bold; color: var(--orange); }
+
+        .btn-submit { background: var(--orange); color: white; width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
         .btn-submit:disabled { background: #555; cursor: not-allowed; }
 
-        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; }
+        footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px;}
 
-        /* --- СТИЛИ ДЛЯ ВНУТРЕННЕЙ ПОЧТЫ УВЕДОМЛЕНИЙ --- */
+        /* --- НОВЫЕ СТИЛИ ДЛЯ ВНУТРЕННЕЙ ПОЧТЫ УВЕДОМЛЕНИЙ --- */
         .mail-btn-container {
             position: relative;
             display: flex;
@@ -189,7 +198,6 @@
             font-size: 14px;
             line-height: 1.4;
             text-align: left;
-            color: white;
         }
         .mail-item .mail-date {
             font-size: 11px;
@@ -218,11 +226,22 @@
             nav a { margin-right: 0; font-size: 18px; }
 
             .header-phone { display: none; }
-            .order-form-grid { grid-template-columns: 1fr; }
-            .btn-order-submit { grid-column: span 1; }
-            .cart-box { padding: 20px; }
-            .cart-table th, .cart-table td { padding: 10px 5px; font-size: 14px; }
-            .page-title { font-size: 32px; margin: 30px 0 20px; }
+            
+            .section-title { font-size: 28px; margin: 40px 0 25px; }
+
+            .cart-drawer { width: 100%; right: -100%; padding: 25px; }
+            
+            .cosm-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+            .prod-card { padding: 15px; border-radius: 20px; }
+            .prod-img-box { height: 180px; }
+        }
+
+        @media (max-width: 480px) {
+            .cosm-grid { grid-template-columns: 1fr; }
+            .modal-content { padding: 30px 20px; }
+            .btn-header { padding: 8px 15px; font-size: 13px; }
+            .cart-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .cart-item > div:last-child { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
@@ -239,144 +258,192 @@
             <a href="index.html">Главная</a>
             <a href="staff.html">Персонал</a>
             <a href="services.html">Услуги</a>
-            <a href="cosmetics.html" class="active">Косметика</a>
+            <a href="#" class="active">Косметика</a>
         </nav>
         <div class="header-actions">
-            <span class="header-phone">+7 777 726 22 88</span>
+            <button class="cart-icon-btn" id="open-cart">🛒 <span class="cart-count" id="cart-count">0</span></button>
             
+            <!-- СИСТЕМНАЯ КНОПКА ПОЧТЫ ДОБАВЛЕНА РЯДОМ -->
             <div class="mail-btn-container">
                 <button class="btn-mail" id="openMailBtn">✉</button>
                 <div class="mail-badge" id="mailBadge">0</div>
             </div>
 
-            <button class="btn-header" id="openModalBtn">Записаться</button>
+            <span class="header-phone">+7 777 726 22 88</span>
+            <button class="btn-header open-modal">Записаться</button>
         </div>
     </div>
 </header>
 
 <main class="container">
-    <h1 class="page-title">Премиальный уход</h1>
-    
-    <div class="cosmetics-grid" id="productsGrid">
+    <h2 class="section-title">Премиальная косметика</h2>
+    <div class="cosm-grid">
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png3.jpeg" alt="Шампунь"></div>
+            <p>Шампунь Steel</p>
+            <span class="prod-price">5500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Шампунь Steel', 5500)">В корзину</button>
         </div>
-</main>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png4.jpeg" alt="Бальзам"></div>
+            <p>Бальзам Beard</p>
+            <span class="prod-price">4200 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Бальзам Beard', 4200)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png5.jpeg" alt="Мыло"></div>
+            <p>Мыло ручной работы</p>
+            <span class="prod-price">2500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Мыло Steel', 2500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png2.jpeg" alt="Глина"></div>
+            <p>Глина для укладки</p>
+            <span class="prod-price">6000 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Глина Matte', 6000)">В корзину</button>
+        </div>
 
-<section class="cart-section" id="cartSection" style="display: none;">
-    <div class="container">
-        <div class="cart-box">
-            <h2 class="cart-title">Ваша корзина</h2>
-            
-            <table class="cart-table">
-                <thead>
-                    <tr>
-                        <th>Товар</th>
-                        <th>Цена</th>
-                        <th>Количество</th>
-                        <th>Всего</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="cartItemsContainer">
-                    </tbody>
-            </table>
-
-            <div class="cart-summary">
-                <span class="cart-total-label">Итого к оплате:</span>
-                <span class="cart-total-val" id="cartTotalOutput">0 ₸</span>
-            </div>
-
-            <h2 class="cart-title" style="margin-top: 40px;">Данные получателя</h2>
-            <form id="orderForm">
-                <div class="order-form-grid">
-                    <div class="form-group">
-                        <label>Ваше имя</label>
-                        <input type="text" id="orderName" placeholder="Иван" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Телефон</label>
-                        <input type="tel" id="orderPhone" placeholder="+7 (777) 777 77 77" required>
-                    </div>
-                    <button type="submit" class="btn-order-submit" id="orderSubmitBtn">Оформить заказ</button>
-                </div>
-            </form>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="png6.jpeg" alt="Помазок для бритья"></div>
+            <p>Помазок Barbarossa Classic</p>
+            <span class="prod-price">7500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Помазок Barbarossa', 7500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="11.jpeg" alt="Пудра для волос"></div>
+            <p>Пудра для объема Barbarossa</p>
+            <span class="prod-price">4800 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Пудра Barbarossa', 4800)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="7.jpeg" alt="Глина Barbarossa"></div>
+            <p>Моделирующая глина Clay</p>
+            <span class="prod-price">5800 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Глина Barbarossa Clay', 5800)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="8.jpeg" alt="Триммер для бороды"></div>
+            <p>Триммер Barber's Precision</p>
+            <span class="prod-price">24500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Триммер Precision', 24500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="9.jpeg" alt="Набор для бритья со станком"></div>
+            <p>Набор Barber's Grooming (T-станок)</p>
+            <span class="prod-price">18500 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Набор Grooming T-ст', 18500)">В корзину</button>
+        </div>
+        <div class="prod-card">
+            <div class="prod-img-box"><img src="10.jpeg" alt="Гель для бритья"></div>
+            <p>Гель для бритья Steel Beard</p>
+            <span class="prod-price">3900 ₸</span>
+            <button class="btn-add-cart" onclick="addToCart('Гель Steel Beard', 3900)">В корзину</button>
         </div>
     </div>
-</section>
+</main>
+
+<div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+        <h2 style="margin:0; color: var(--dark);">Корзина</h2>
+        <button id="close-cart" style="background:none; border:none; font-size:35px; cursor:pointer; color: var(--dark);">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items-container"></div>
+    
+    <div class="cart-delivery-box" id="cart-delivery-section" style="display: none;">
+        <label for="cart-delivery-method">Способ получения</label>
+        <select id="cart-delivery-method">
+            <option value="pickup">Самовывоз (пр. Назарбаева 100)</option>
+            <option value="delivery">Доставка курьером (+1 500 ₸)</option>
+        </select>
+        <div class="cart-address-group" id="cart-address-group">
+            <label for="cart-customer-address">Адрес доставки</label>
+            <input type="text" id="cart-customer-address" placeholder="Город, улица, дом, квартира">
+        </div>
+    </div>
+
+    <div class="cart-footer">
+        <div class="cart-total-box">
+            <span>Итого:</span>
+            <span id="cart-total-price">0 ₸</span>
+        </div>
+        <button class="btn-checkout" id="checkout-btn">Оформить заказ</button>
+    </div>
+</div>
 
 <div class="modal-overlay" id="modal">
     <div class="modal-content">
-        <span class="modal-close" id="closeModal">&times;</span>
-        <h2 class="modal-title">Онлайн-запись</h2>
-        <form class="booking-form" id="bookingForm">
+        <span class="modal-close" id="close-modal">&times;</span>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:30px;">Online-запись</h2>
+        <form id="booking-form">
             <div class="form-group">
                 <label>Ваше имя</label>
-                <input type="text" id="client-name" required placeholder="Иван Иванов">
+                <input type="text" id="client-name" placeholder="Александр" required>
             </div>
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="tel" id="client-phone" required placeholder="+7 (700) 000-00-00">
+                <input type="tel" id="client-phone" placeholder="+7 (777) 777 77 77" required>
             </div>
             <div class="form-group">
                 <label>Выберите услугу</label>
                 <select id="select-service" required>
-                    <option value="" disabled selected>— Выберите услугу —</option>
+                    <option value="">Выберите из списка</option>
                     <option value="haircut">Мужская стрижка</option>
-                    <option value="beard">Моделирование бороды</option>
-                    <option value="complex">Комплекс (Стрижка + Борода)</option>
-                    <option value="royal">Королевское бритье</option>
+                    <option value="beard">Оформление бороды</option>
+                    <option value="complex">Стрижка + Борода</option>
+                    <option value="kids">Детская стрижка</option>
+                    <option value="shave_face">Бритье лица</option>
+                    <option value="shave_head">Бритье головы</option>
+                    <option value="clipper">Стрижка машинкой</option>
                 </select>
             </div>
+
             <div class="form-group">
-                <label>Уровень мастера</label>
-                <select id="select-rank" required disabled>
-                    <option value="" disabled selected>— Сначала выберите услугу —</option>
+                <label>Категория мастера</label>
+                <select id="select-rank" required>
+                    <option value="">Выберите квалификацию</option>
+                    <option value="trainee">Стажёр</option>
                     <option value="barber">Барбер</option>
-                    <option value="top">Топ-Барбер</option>
-                    <option value="brand">Бренд-Барбер</option>
+                    <option value="senior">Старший барбер</option>
                 </select>
             </div>
+            
             <div class="form-group">
-                <label>Выбор мастера</label>
-                <select id="select-master" required disabled>
-                    <option value="" disabled selected>— Сначала выберите уровень —</option>
+                <label>Выберите мастера</label>
+                <select id="select-master" required>
+                    <option value="">Сначала выберите категорию</option>
                 </select>
             </div>
+
+            <div class="schedule-info-box" id="schedule-box">
+                <div class="title">График работы мастера:</div>
+                <div id="schedule-text">Понедельник — Пятница, 10:00 - 21:00</div>
+            </div>
+
             <div class="form-group">
                 <label>День недели</label>
-                <select id="select-day" required>
-                    <option value="" disabled selected>— Выберите день —</option>
-                    <option value="Понедельник">Понедельник</option>
-                    <option value="Вторник">Вторник</option>
-                    <option value="Среда">Среда</option>
-                    <option value="Четверг">Четверг</option>
-                    <option value="Пятница">Пятница</option>
-                    <option value="Суббота">Суббота</option>
-                    <option value="Воскресенье">Воскресенье</option>
+                <select id="select-day" required disabled>
+                    <option value="">Сначала выберите мастера</option>
                 </select>
             </div>
+
             <div class="form-group">
-                <label>Доступное время</label>
-                <select id="select-time" required>
-                    <option value="" disabled selected>— Выберите время —</option>
-                    <option value="10:00">10:00</option>
-                    <option value="11:30">11:30</option>
-                    <option value="13:00">13:00</option>
-                    <option value="14:30">14:30</option>
-                    <option value="16:00">16:00</option>
-                    <option value="17:30">17:30</option>
-                    <option value="19:00">19:00</option>
-                    <option value="20:30">20:30</option>
+                <label>Время записи</label>
+                <select id="select-time" required disabled>
+                    <option value="">Сначала выберите день</option>
                 </select>
             </div>
-            <div class="price-box">
-                <div class="price-label">Стоимость услуги</div>
-                <div class="price-amount" id="price-output">0 ₸</div>
+
+            <div class="price-display-box">
+                <div class="price-display-title">Стоимость услуги:</div>
+                <div class="price-display-val" id="price-output">0 ₸</div>
             </div>
-            <button type="submit" class="btn-submit" id="submitBtn">Подтвердить</button>
+
+            <button type="submit" class="btn-submit" id="submitBtn">ПОДТВЕРДИТЬ</button>
         </form>
     </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОЧТЫ -->
 <div class="modal-overlay" id="mailModal">
     <div class="modal-content" style="max-width: 600px;">
         <span class="modal-close" id="closeMailModal">&times;</span>
@@ -387,8 +454,7 @@
             <div class="mail-tab" id="tabCosmetics">Косметика (<span id="countCosmetics">0</span>)</div>
         </div>
 
-        <div class="mail-list" id="mailListContainer">
-            </div>
+        <div class="mail-list" id="mailListContainer"></div>
     </div>
 </div>
 
@@ -400,9 +466,10 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+    // Добавлены onSnapshot, query, orderBy для работы почты в реальном времени
     import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-    // Конфигурация Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
         authDomain: "diplom-f94fb.firebaseapp.com",
@@ -414,218 +481,435 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
-    // БУРГЕР МЕНЮ
+    let currentPriceValue = 0;
+
+    // МОБИЛЬНОЕ МЕНЮ (БУРГЕР)
     const burgerBtn = document.getElementById('burgerBtn');
     const navMenu = document.getElementById('navMenu');
+
     burgerBtn.addEventListener('click', () => {
         navMenu.classList.toggle('active');
+        burgerBtn.classList.toggle('open');
     });
 
-    // ОРИГИНАЛЬНЫЕ ДАННЫЕ ВАШИХ ТОВАРОВ
-    const products = [
-        { id: 'p1', brand: 'Reuzel', title: 'Clay Matte Pomade', desc: 'Глина-помада сильной фиксации на водной основе. Создает матовый финиш и текстуру.', price: 8500, img: 'https://images.unsplash.com/photo-1608248597481-496100c80836?auto=format&fit=crop&q=80&w=500' },
-        { id: 'p2', brand: 'Morgan\'s', title: 'Luxury Beard Oil', desc: 'Элитное масло для ухода за бородой с ароматом бергамота, лайма и мускуса.', price: 11200, img: 'https://images.unsplash.com/photo-1626015713026-d8309ded11c7?auto=format&fit=crop&q=80&w=500' },
-        { id: 'p3', brand: 'Suavecito', title: 'Firme Hold Pomade', desc: 'Легендарный стайлинг экстрасильной фиксации. Смывается обычной водой.', price: 7900, img: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=80&w=500' },
-        { id: 'p4', brand: 'Preraso', title: 'Pre-Shave Cream', desc: 'Крем до бритья с эвкалиптом и ментолом. Идеально подготавливает кожу.', price: 5400, img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=500' }
-    ];
-
-    let cart = {};
-
-    // Отрендерить оригинальную витрину
-    const productsGrid = document.getElementById('productsGrid');
-    products.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-            <img src="${p.img}" alt="${p.title}" class="product-img">
-            <div class="product-info">
-                <span class="product-brand">${p.brand}</span>
-                <h3 class="product-title">${p.title}</h3>
-                <p class="product-desc">${p.desc}</p>
-                <div class="product-footer">
-                    <span class="product-price">${p.price.toLocaleString('ru-RU')} ₸</span>
-                    <button class="btn-buy" data-id="${p.id}">В корзину</button>
-                </div>
-            </div>
-        `;
-        productsGrid.appendChild(card);
-    });
-
-    // Логика корзины
-    productsGrid.addEventListener('click', (e) => {
-        if(e.target.classList.contains('btn-buy')) {
-            const id = e.target.getAttribute('data-id');
-            if(cart[id]) {
-                cart[id]++;
-            } else {
-                cart[id] = 1;
-            }
-            updateCartUI();
-        }
-    });
-
-    function updateCartUI() {
-        const cartSection = document.getElementById('cartSection');
-        const container = document.getElementById('cartItemsContainer');
-        const totalOutput = document.getElementById('cartTotalOutput');
-        
-        container.innerHTML = '';
-        let totalSum = 0;
-        let itemsCount = 0;
-
-        Object.keys(cart).forEach(id => {
-            const product = products.find(p => p.id === id);
-            if(!product) return;
-
-            const count = cart[id];
-            const itemTotal = product.price * count;
-            totalSum += itemTotal;
-            itemsCount += count;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><div class="cart-item-title">${product.brand} ${product.title}</div></td>
-                <td>${product.price.toLocaleString('ru-RU')} ₸</td>
-                <td>
-                    <button class="cart-count-btn minus" data-id="${id}">-</button>
-                    <span class="cart-count-val">${count}</span>
-                    <button class="cart-count-btn plus" data-id="${id}">+</button>
-                </td>
-                <td><b>${itemTotal.toLocaleString('ru-RU')} ₸</b></td>
-                <td><button class="cart-remove-btn" data-id="${id}">&times;</button></td>
-            `;
-            container.appendChild(row);
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
         });
+    });
 
-        totalOutput.textContent = totalSum.toLocaleString('ru-RU') + ' ₸';
-        cartSection.style.display = itemsCount > 0 ? 'block' : 'none';
+    // ЛОГИКА КОРЗИНЫ С СОХРАНЕНИЕМ (LOCALSTORAGE)
+    let cart = [];
+    const DELIVERY_COST = 1500;
+    
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartContainer = document.getElementById('cart-items-container');
+    const cartCountLabel = document.getElementById('cart-count');
+    const totalPriceLabel = document.getElementById('cart-total-price');
+    
+    const deliverySection = document.getElementById('cart-delivery-section');
+    const deliveryMethodSelect = document.getElementById('cart-delivery-method');
+    const addressGroup = document.getElementById('cart-address-group');
+    const addressInput = document.getElementById('cart-customer-address');
+
+    function saveCartToStorage() {
+        localStorage.setItem('barber_cart', JSON.stringify(cart));
+        localStorage.setItem('barber_delivery_method', deliveryMethodSelect.value);
+        localStorage.setItem('barber_delivery_address', addressInput.value);
     }
 
-    document.getElementById('cartItemsContainer').addEventListener('click', (e) => {
-        const id = e.target.getAttribute('data-id');
-        if(!id) return;
-
-        if(e.target.classList.contains('plus')) {
-            cart[id]++;
-        } else if(e.target.classList.contains('minus')) {
-            if(cart[id] > 1) cart[id]--;
-            else delete cart[id];
-        } else if(e.target.classList.contains('cart-remove-btn')) {
-            delete cart[id];
+    function loadCartFromStorage() {
+        const savedCart = localStorage.getItem('barber_cart');
+        if (savedCart) {
+            cart = JSON.parse(savedCart);
         }
-        updateCartUI();
+
+        const savedMethod = localStorage.getItem('barber_delivery_method');
+        if (savedMethod) {
+            deliveryMethodSelect.value = savedMethod;
+        }
+
+        const savedAddress = localStorage.getItem('barber_delivery_address');
+        if (savedAddress) {
+            addressInput.value = savedAddress;
+        }
+
+        if (deliveryMethodSelect.value === 'delivery') {
+            addressGroup.style.display = 'block';
+            addressInput.required = true;
+        } else {
+            addressGroup.style.display = 'none';
+            addressInput.required = false;
+        }
+
+        updateUI();
+    }
+
+    deliveryMethodSelect.addEventListener('change', () => {
+        if (deliveryMethodSelect.value === 'delivery') {
+            addressGroup.style.display = 'block';
+            addressInput.required = true;
+        } else {
+            addressGroup.style.display = 'none';
+            addressInput.required = false;
+            addressInput.value = '';
+        }
+        saveCartToStorage();
+        updateUI();
     });
 
-    // Отправка заказа косметики в Firebase (сохранено оригинальное имя коллекции cosmetics_orders)
-    document.getElementById('orderForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const submitBtn = document.getElementById('orderSubmitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'ОТПРАВКА...';
+    addressInput.addEventListener('input', () => {
+        saveCartToStorage();
+    });
 
-        const clientName = document.getElementById('orderName').value;
-        const clientPhone = document.getElementById('orderPhone').value;
+    function addToCart(name, price) {
+        const existingItem = cart.find(item => item.name === name);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name, price, quantity: 1 });
+        }
+        saveCartToStorage();
+        updateUI();
+        cartDrawer.classList.add('active');
+    }
 
-        let productsListText = [];
-        let totalSumValue = 0;
+    function changeQuantity(name, action) {
+        const item = cart.find(item => item.name === name);
+        if (!item) return;
 
-        Object.keys(cart).forEach(id => {
-            const product = products.find(p => p.id === id);
-            if(product) {
-                productsListText.push(`${product.brand} ${product.title} (x${cart[id]})`);
-                totalSumValue += product.price * cart[id];
+        if (action === 'increase') {
+            item.quantity += 1;
+        } else if (action === 'decrease') {
+            item.quantity -= 1;
+            if (item.quantity <= 0) {
+                cart = cart.filter(item => item.name !== name);
             }
+        }
+        saveCartToStorage();
+        updateUI();
+    }
+
+    function removeFromCart(name) {
+        cart = cart.filter(item => item.name !== name);
+        saveCartToStorage();
+        updateUI();
+    }
+
+    window.addToCart = addToCart;
+    window.changeQuantity = changeQuantity;
+    window.removeFromCart = removeFromCart;
+
+    function updateUI() {
+        cartContainer.innerHTML = '';
+        let total = 0;
+        let totalItemsCount = 0;
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = '<p style="color: #888; text-align: center; margin-top: 20px;">Корзина пуста</p>';
+            cartCountLabel.innerText = '0';
+            totalPriceLabel.innerText = '0 ₸';
+            deliverySection.style.display = 'none';
+            return;
+        }
+
+        deliverySection.style.display = 'block';
+
+        cart.forEach((item) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            totalItemsCount += item.quantity;
+
+            cartContainer.innerHTML += `
+                <div class="cart-item">
+                    <div>
+                        <span class="cart-item-name">${item.name}</span>
+                        <span class="cart-item-price">${itemTotal.toLocaleString()} ₸</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="cart-quantity-controls">
+                            <button class="cart-btn-qty" onclick="changeQuantity('${item.name}', 'decrease')">-</button>
+                            <span class="cart-qty-num">${item.quantity}</span>
+                            <button class="cart-btn-qty" onclick="changeQuantity('${item.name}', 'increase')">+</button>
+                        </div>
+                        <button class="btn-remove-item" onclick="removeFromCart('${item.name}')">&times;</button>
+                    </div>
+                </div>`;
         });
 
-        try {
-            await addDoc(collection(db, "cosmetics_orders"), {
-                clientName: clientName,
-                clientPhone: clientPhone,
-                products: productsListText.join(', '),
-                totalPrice: totalSumValue,
-                createdAt: new Date().toISOString()
-            });
+        const isDelivery = deliveryMethodSelect.value === 'delivery';
+        if (isDelivery) {
+            total += DELIVERY_COST;
+            cartContainer.innerHTML += `
+                <div class="cart-item" style="border-bottom: 2px dashed var(--orange); padding-bottom: 10px; margin-top: 10px;">
+                    <div>
+                        <span class="cart-item-name" style="color: var(--orange);">🚚 Доставка курьером</span>
+                    </div>
+                    <div>
+                        <span class="cart-item-price" style="color: var(--orange);">${DELIVERY_COST.toLocaleString()} ₸</span>
+                    </div>
+                </div>`;
+        }
 
-            alert('Спасибо за заказ! Наш менеджер свяжется с вами для подтверждения.');
-            cart = {};
-            updateCartUI();
-            document.getElementById('orderForm').reset();
-        } catch(err) {
-            console.error("Ошибка Firebase: ", err);
-            alert('Произошла ошибка при отправке заказа.');
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Оформить заказ';
+        cartCountLabel.innerText = totalItemsCount;
+        totalPriceLabel.innerText = total.toLocaleString() + ' ₸';
+    }
+
+    document.getElementById('open-cart').onclick = () => cartDrawer.classList.add('active');
+    document.getElementById('close-cart').onclick = () => cartDrawer.classList.remove('active');
+
+    loadCartFromStorage();
+
+    // ОФОРМЛЕНИЕ ЗАКАЗА (ОТПРАВЛЯЕТ В КОЛЛЕКЦИЮ cosmetics_orders ДЛЯ КОРРЕКТНОЙ СВЯЗИ С ПОЧТОЙ)
+    document.getElementById('checkout-btn').onclick = async () => {
+        if (cart.length === 0) {
+            alert('Ваша корзина пуста!');
+            return;
+        }
+
+        const isDelivery = deliveryMethodSelect.value === 'delivery';
+        const finalAddress = addressInput.value.trim();
+
+        if (isDelivery && !finalAddress) {
+            alert('Пожалуйста, укажите адрес доставки.');
+            addressInput.focus();
+            return;
+        }
+
+        const clientNameInput = prompt("Введите ваше имя:");
+        if (!clientNameInput) {
+            alert("Оформление заказа отменено.");
+            return;
+        }
+
+        const phoneNumber = prompt("Введите ваш номер телефона для подтверждения покупки:");
+        if (!phoneNumber) {
+            alert("Оформление заказа отменено.");
+            return;
+        }
+
+        const productSummary = cart.map(i => `${i.name} (x${i.quantity})`).join(', ');
+
+        const orderData = {
+            clientName: clientNameInput,
+            clientPhone: phoneNumber,
+            products: productSummary,
+            totalPrice: parseInt(totalPriceLabel.innerText.replace(/\s/g, '')),
+            deliveryMethod: isDelivery ? "Доставка курьером" : "Самовывоз",
+            address: isDelivery ? finalAddress : "Не требуется (Самовывоз)",
+            createdAt: new Date().toISOString()
+        };
+
+        try {
+            await addDoc(collection(db, 'cosmetics_orders'), orderData);
+            alert('Заявка на покупку успешно отправлена! Мы свяжемся с вами.');
+            
+            cart = [];
+            addressInput.value = '';
+            deliveryMethodSelect.value = 'pickup';
+            addressGroup.style.display = 'none';
+            localStorage.removeItem('barber_cart');
+            localStorage.removeItem('barber_delivery_method');
+            localStorage.removeItem('barber_delivery_address');
+            
+            updateUI();
+            cartDrawer.classList.remove('active');
+        } catch (error) {
+            console.error("Ошибка при оформлении заказа: ", error);
+            alert('Не удалось отправить заказ. Попробуйте еще раз.');
         }
     };
 
-    // ОРИГИНАЛЬНАЯ ЛОГИКА ОНЛАЙН-ЗАПИСИ (ИЗ ВАШЕГО ФАЙЛА)
-    const modal = document.getElementById('modal');
-    const openModalBtn = document.getElementById('openModalBtn');
-    const closeModal = document.getElementById('closeModal');
 
+    // === СИСТЕМА ОНЛАЙН-ЗАПИСИ ===
+    const priceList = {
+        haircut:    { trainee: 4500,  barber: 10000, senior: 14000 },
+        beard:      { trainee: 2000,  barber: 6000,  senior: 8000  },
+        kids:       { trainee: 3000,  barber: 7000,  senior: 10000 },
+        complex:    { trainee: 5000,  barber: 13000, senior: 18000 },
+        shave_face: { trainee: 3000,  barber: 5000,  senior: 8000  },
+        shave_head: { trainee: 3000,  barber: 6000,  senior: 9000  },
+        clipper: { trainee: 3000, barber: 6000, senior: 8000 }
+    };
+
+    const serviceNamesRu = {
+        haircut: "Мужская стрижка",
+        beard: "Оформление бороды",
+        complex: "Стрижка + Борода",
+        kids: "Детская стрижка",
+        shave_face: "Бритье лица",
+        shave_head: "Бритье головы",
+        clipper: "Стрижка машинкой"
+    };
+
+    const defaultHours = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
+    const weekendHours = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+
+    const mastersByRank = {
+        trainee: [
+            { name: "Любой свободный стажёр", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Артем (стажер)", scheduleText: "Пн, Ср, Пт: 10:00 - 21:00", days: { "Пн": defaultHours, "Ср": defaultHours, "Пт": defaultHours } }
+        ],
+        barber: [
+            { name: "Любой свободный барбер", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Дмитрий (барбер)", scheduleText: "Вт, Чт, Сб: 10:00 - 21:00", days: { "Вт": defaultHours, "Чт": defaultHours, "Сб": weekendHours } },
+            { name: "Кирилл (барбер)", scheduleText: "Пн, Вт, Ср, Чт: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours } }
+        ],
+        senior: [
+            { name: "Любой свободный старший барбер", scheduleText: "Пн-Вс: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Александр (старший барбер)", scheduleText: "Пн-Пт: 10:00 - 20:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours } },
+            { name: "Игорь (старший барбер)", scheduleText: "Ср, Чт, Пт, Сб, Вс: 11:00 - 21:00", days: { "Ср": defaultHours, "Чт": defaultHours, "Пт": defaultHours, "Сб": weekendHours, "Вс": weekendHours } },
+            { name: "Максим (старший барбер)", scheduleText: "Пн, Вт, Пт, Сб: 10:00 - 21:00", days: { "Пн": defaultHours, "Вт": defaultHours, "Пт": defaultHours, "Сб": weekendHours } }
+        ]
+    };
+
+    const modal = document.getElementById('modal');
     const selectService = document.getElementById('select-service');
     const selectRank = document.getElementById('select-rank');
     const selectMaster = document.getElementById('select-master');
     const selectDay = document.getElementById('select-day');
     const selectTime = document.getElementById('select-time');
+    const scheduleBox = document.getElementById('schedule-box');
+    const scheduleText = document.getElementById('schedule-text');
     const priceOutput = document.getElementById('price-output');
+    const submitBtn = document.getElementById('submitBtn');
 
-    const serviceNamesRu = { haircut: "Мужская стрижка", beard: "Моделирование бороды", complex: "Комплекс (Стрижка + Борода)", royal: "Королевское бритье" };
-    const basePrices = { haircut: 5000, beard: 4000, complex: 8000, royal: 6000 };
-    const rankMultipliers = { barber: 1.0, top: 1.4, brand: 1.8 };
-    const mastersByRank = {
-        barber: ["Алексей", "Дмитрий", "Игорь"],
-        top: ["Александр", "Артем"],
-        brand: ["Максим (Шеф-барбер)"]
-    };
+    document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        resetPrice();
+    });
 
-    function open() { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
-    function close() { modal.style.display = 'none'; document.body.style.overflow = 'auto'; resetPrice(); }
-    openModalBtn.onclick = open;
-    closeModal.onclick = close;
-    window.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    document.getElementById('close-modal').onclick = () => { close(); };
+    window.onclick = (e) => { if(e.target === modal) close(); };
 
-    function resetPrice() { priceOutput.textContent = "0 ₸"; }
-
-    function calculatePrice() {
-        const service = selectService.value;
-        const rank = selectRank.value;
-        if (!service) { resetPrice(); return; }
-        let price = basePrices[service];
-        if (rank && rankMultipliers[rank]) { price = Math.round(price * rankMultipliers[rank]); }
-        priceOutput.textContent = price.toLocaleString('ru-RU') + " ₸";
+    function close() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
 
-    selectService.addEventListener('change', () => {
-        selectRank.disabled = false;
-        selectRank.selectedIndex = 0;
-        selectMaster.disabled = true;
-        selectMaster.innerHTML = '<option value="" disabled selected>— Сначала выберите уровень —</option>';
-        calculatePrice();
-    });
+    function resetDateTimeFields() {
+        selectDay.innerHTML = '<option value="">Сначала выберите мастера</option>';
+        selectDay.disabled = true;
+        selectTime.innerHTML = '<option value="">Сначала выберите день</option>';
+        selectTime.disabled = true;
+    }
+
+    function updateMastersList() {
+        const rank = selectRank.value;
+        selectMaster.innerHTML = '';
+        resetDateTimeFields();
+        scheduleBox.style.display = 'none';
+
+        if (!rank) {
+            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
+            return;
+        }
+
+        const placeholder = document.createElement('option');
+        placeholder.value = "";
+        placeholder.textContent = "-- Выберите мастера --";
+        selectMaster.appendChild(placeholder);
+
+        mastersByRank[rank].forEach(master => {
+            const option = document.createElement('option');
+            option.value = master.name;
+            option.textContent = master.name;
+            selectMaster.appendChild(option);
+        });
+    }
+
+    function handleMasterChange() {
+        const rank = selectRank.value;
+        const masterName = selectMaster.value;
+
+        resetDateTimeFields();
+
+        if (!rank || !masterName) {
+            scheduleBox.style.display = 'none';
+            return;
+        }
+
+        const masterObj = mastersByRank[rank].find(m => m.name === masterName);
+        
+        if (masterObj) {
+            scheduleText.textContent = masterObj.scheduleText;
+            scheduleBox.style.display = 'block';
+
+            selectDay.innerHTML = '<option value="">-- Выберите день --</option>';
+            Object.keys(masterObj.days).forEach(day => {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day;
+                selectDay.appendChild(option);
+            });
+            selectDay.disabled = false;
+        }
+    }
+
+    function handleDayChange() {
+        const rank = selectRank.value;
+        const masterName = selectMaster.value;
+        const selectedDay = selectDay.value;
+
+        selectTime.innerHTML = '<option value="">-- Выберите время --</option>';
+        selectTime.disabled = true;
+
+        if (!rank || !masterName || !selectedDay) return;
+
+        const masterObj = mastersByRank[rank].find(m => m.name === masterName);
+        const availableHours = masterObj.days[selectedDay];
+
+        if (availableHours) {
+            availableHours.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                selectTime.appendChild(option);
+            });
+            selectTime.disabled = false;
+        }
+    }
+
+    function updatePrice() {
+        const service = selectService.value;
+        const rank = selectRank.value;
+
+        if (service && rank) {
+            const price = priceList[service][rank];
+            currentPriceValue = price;
+            priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
+        } else {
+            currentPriceValue = 0;
+            priceOutput.textContent = '0 ₸';
+        }
+    }
+
+    function resetPrice() {
+        document.getElementById('booking-form').reset();
+        updateMastersList();
+        resetDateTimeFields();
+        scheduleBox.style.display = 'none';
+        currentPriceValue = 0;
+        priceOutput.textContent = '0 ₸';
+    }
 
     selectRank.addEventListener('change', () => {
-        const rank = selectRank.value;
-        selectMaster.disabled = false;
-        selectMaster.innerHTML = '<option value="" disabled selected>— Выберите мастера —</option>';
-        if (mastersByRank[rank]) {
-            mastersByRank[rank].forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m; opt.textContent = m;
-                selectMaster.appendChild(opt);
-            });
-        }
-        calculatePrice();
+        updateMastersList();
+        updatePrice();
     });
+    selectMaster.addEventListener('change', handleMasterChange);
+    selectDay.addEventListener('change', handleDayChange);
+    selectService.addEventListener('change', updatePrice);
 
-    document.getElementById('bookingForm').onsubmit = async (e) => {
+    document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
+        
         submitBtn.disabled = true;
-        submitBtn.textContent = 'ПОДТВЕРДИТЬ...';
+        submitBtn.textContent = 'ОТПРАВКА...';
 
         const name = document.getElementById('client-name').value;
         const phone = document.getElementById('client-phone').value;
@@ -637,30 +921,30 @@
         const bookingTime = selectTime.value;
 
         const bookingData = {
-            name: name,
-            phone: phone,
+            clientName: name,
+            clientPhone: phone,
             service: serviceName,
-            rank: rank,
-            master: master,
+            masterRank: rank,
+            masterName: master,
             bookingDayOfWeek: bookingDay, 
             bookingTime: bookingTime,     
-            price: priceOutput.textContent,
-            createdAt: serverTimestamp()
+            price: currentPriceValue,
+            createdAt: new Date().toISOString()
         };
 
         try {
-            await addDoc(collection(db, 'bookings'), bookingData);
+            await addDoc(collection(db, 'appointments'), bookingData);
             alert(`Запись успешно создана!\nЖдем вас в ${bookingDay} в ${bookingTime}.`);
             close();
+            resetPrice();
         } catch (error) {
             console.error("Ошибка при записи: ", error);
-            alert('Произошла ошибка при отправке записи.');
+            alert('Произошла ошибка при отправке записи. Проверьте правила базы данных.');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'ПОДТВЕРДИТЬ';
         }
     };
-
 
     // ========================================================
     // --- ЛОГИКА ВНУТРЕННЕЙ ПОЧТЫ (УВЕДОМЛЕНИЙ АДМИНИСТРАТОРА) ---
@@ -706,8 +990,7 @@
         renderMail();
     }
 
-    // Обратите внимание: подписка идет на оригинальную коллекцию "bookings"
-    const qAppointments = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+    const qAppointments = query(collection(db, "appointments"), orderBy("createdAt", "desc"));
     onSnapshot(qAppointments, (snapshot) => {
         dataHaircuts = [];
         snapshot.forEach((doc) => {
@@ -726,7 +1009,7 @@
         countCosmetics.textContent = dataCosmetics.length;
         updateBadgeAndRender();
     }, (err) => {
-        console.log("Коллекция 'cosmetics_orders' пока не содержит документов.");
+        console.log("Коллекция 'cosmetics_orders' пока пуста.");
     });
 
     function updateBadgeAndRender() {
@@ -748,10 +1031,7 @@
         }
 
         list.forEach(item => {
-            let date = 'Только что';
-            if (item.createdAt) {
-                date = item.createdAt.seconds ? new Date(item.createdAt.seconds * 1000).toLocaleString('ru-RU') : new Date(item.createdAt).toLocaleString('ru-RU');
-            }
+            const date = item.createdAt ? new Date(item.createdAt).toLocaleString('ru-RU') : 'Только что';
             let html = '';
 
             if (currentTab === 'haircuts') {
@@ -759,11 +1039,11 @@
                     <div class="mail-item">
                         <span class="mail-date">${date}</span>
                         <strong>Новая запись на стрижку!</strong><br>
-                        <b>Клиент:</b> ${item.name || 'Не указано'} (${item.phone || 'Нет номера'})<br>
+                        <b>Клиент:</b> ${item.clientName || 'Не указано'} (${item.clientPhone || 'Нет номера'})<br>
                         <b>Услуга:</b> ${item.service || '—'}<br>
-                        <b>Мастер:</b> ${item.master || '—'} (${item.rank || '—'})<br>
+                        <b>Мастер:</b> ${item.masterName || '—'} (${item.masterRank || '—'})<br>
                         <b>Время:</b> ${item.bookingDayOfWeek || '—'}, ${item.bookingTime || '—'}<br>
-                        <b>Стоимость:</b> ${item.price || '0 ₸'}
+                        <b>Стоимость:</b> ${item.price ? item.price.toLocaleString('ru-RU') : 0} ₸
                     </div>
                 `;
             } else {
