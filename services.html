@@ -486,6 +486,13 @@
         burgerBtn.classList.toggle('open');
     });
 
+    document.querySelectorAll('#navMenu a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            burgerBtn.classList.remove('open');
+        });
+    });
+
     // МОДАЛЬНОЕ ОКНО
     const modal = document.getElementById('modal');
     document.querySelectorAll('.open-modal').forEach(b => b.onclick = () => {
@@ -570,7 +577,7 @@
         if (scheduleBox) scheduleBox.style.display = 'none';
 
         if (!rank) {
-            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
+            selectMaster.innerHTML = '<option value="">Сначала выберите категории</option>';
             return;
         }
 
