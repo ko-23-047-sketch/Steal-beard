@@ -20,7 +20,7 @@
             -webkit-font-smoothing: antialiased; scroll-behavior: smooth;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
 
         /* HEADER */
         header {
@@ -85,6 +85,98 @@
 
         footer { background: var(--dark); padding: 50px 0; color: white; text-align: center; margin-top: 80px; }
 
+        /* --- СТИЛИ ДЛЯ ВНУТРЕННЕЙ ПОЧТЫ УВЕДОМЛЕНИЙ --- */
+        .mail-btn-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .btn-mail {
+            background: #222;
+            border: 1px solid var(--orange);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        .btn-mail:hover {
+            background: var(--orange);
+            transform: scale(1.05);
+        }
+        .mail-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .mail-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+        .mail-tab {
+            background: #222;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .mail-tab.active {
+            background: var(--orange);
+            color: white;
+            border-color: var(--orange);
+        }
+        .mail-list {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .mail-item {
+            background: #222;
+            border-left: 4px solid var(--orange);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            line-height: 1.4;
+            text-align: left;
+        }
+        .mail-item .mail-date {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .mail-item strong {
+            color: var(--orange);
+        }
+        .mail-empty {
+            text-align: center;
+            color: #888;
+            padding: 20px 0;
+        }
+
         /* --- АДАПТИВНОСТЬ --- */
         @media (max-width: 768px) {
             .burger-menu { display: flex; }
@@ -129,6 +221,12 @@
         </nav>
         <div class="header-actions">
             <span class="header-phone">+7 777 726 22 88</span>
+            
+            <div class="mail-btn-container">
+                <button class="btn-mail" id="openMailBtn">✉</button>
+                <div class="mail-badge" id="mailBadge">0</div>
+            </div>
+
             <button class="btn-header open-modal">Записаться</button>
         </div>
     </div>
@@ -282,6 +380,21 @@
     </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО ПОЧТЫ -->
+<div class="modal-overlay" id="mailModal">
+    <div class="modal-content" style="max-width: 600px;">
+        <span class="modal-close" id="closeMailModal">&times;</span>
+        <h2 style="text-align:center; color:var(--orange); text-transform:uppercase; margin-bottom:20px;">Внутренняя почта</h2>
+        
+        <div class="mail-tabs">
+            <div class="mail-tab active" id="tabHaircuts">Стрижки (<span id="countHaircuts">0</span>)</div>
+            <div class="mail-tab" id="tabCosmetics">Косметика (<span id="countCosmetics">0</span>)</div>
+        </div>
+
+        <div class="mail-list" id="mailListContainer"></div>
+    </div>
+</div>
+
 <footer>
     <div class="container">
         <p>© 2026 STEEL BEARD BARBERSHOP. <br> Алматы, пр. Назарбаева 100. Тел: +7 777 726 22 88</p>
@@ -289,16 +402,17 @@
 </footer>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyBjsTDpE_CLV8kyWdY2vLGJyS-em_SQF3k",
+        authDomain: "diplom-f94fb.firebaseapp.com",
+        projectId: "diplom-f94fb",
+        storageBucket: "diplom-f94fb.firebasestorage.app",
+        messagingSenderId: "318059526136",
+        appId: "1:318059526136:web:1767749fb5255bf80d080d",
+        measurementId: "G-139BDNRX6Q"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -335,7 +449,6 @@
         clipper: "Стрижка машинкой"
     };
 
-    // БАЗА ДАННЫХ МАСТЕРОВ С СЕГМЕНТИРОВАННЫМ ГРАФИКОМ (Дни и Часы)
     const defaultHours = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
     const weekendHours = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
 
@@ -387,7 +500,7 @@
                 handleMasterChange();
             } else {
                 updateMastersList();
-                scheduleBox.style.display = 'none';
+                if(scheduleBox) scheduleBox.style.display = 'none';
             }
             
             updatePrice();
@@ -409,15 +522,14 @@
         selectTime.disabled = true;
     }
 
-    // ОБНОВЛЕНИЕ СПИСКА МАСТЕРОВ
     function updateMastersList() {
         const rank = selectRank.value;
         selectMaster.innerHTML = '';
         resetDateTimeFields();
-        scheduleBox.style.display = 'none';
+        if(scheduleBox) scheduleBox.style.display = 'none';
 
         if (!rank) {
-            selectMaster.innerHTML = '<option value="">Сначала выберите категорию</option>';
+            selectMaster.innerHTML = '<option value="">Сначала выберите категории</option>';
             return;
         }
 
@@ -434,7 +546,6 @@
         });
     }
 
-    // ЛОГИКА ПРИ ВЫБОРЕ КОНКРЕТНОГО БАРБЕРА (ПОКАЗ ГРАФИКА + ДНЕЙ)
     function handleMasterChange() {
         const rank = selectRank.value;
         const masterName = selectMaster.value;
@@ -442,15 +553,15 @@
         resetDateTimeFields();
 
         if (!rank || !masterName) {
-            scheduleBox.style.display = 'none';
+            if(scheduleBox) scheduleBox.style.display = 'none';
             return;
         }
 
         const masterObj = mastersByRank[rank].find(m => m.name === masterName);
         
         if (masterObj) {
-            scheduleText.textContent = masterObj.scheduleText;
-            scheduleBox.style.display = 'block';
+            if(scheduleText) scheduleText.textContent = masterObj.scheduleText;
+            if(scheduleBox) scheduleBox.style.display = 'block';
 
             selectDay.innerHTML = '<option value="">-- Выберите день --</option>';
             Object.keys(masterObj.days).forEach(day => {
@@ -463,7 +574,6 @@
         }
     }
 
-    // ЛОГИКА ПРИ ВЫБОРЕ ДНЯ НЕДЕЛИ (ПОКАЗ ДОСТУПНОГО ВРЕМЕНИ)
     function handleDayChange() {
         const rank = selectRank.value;
         const masterName = selectMaster.value;
@@ -488,7 +598,6 @@
         }
     }
 
-    // РАСЧЕТ СТОИМОСТИ
     function updatePrice() {
         const service = selectService.value;
         const rank = selectRank.value;
@@ -496,28 +605,26 @@
         if (service && rank) {
             const price = priceList[service][rank];
             currentPriceValue = price;
-            priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
+            if(priceOutput) priceOutput.textContent = price.toLocaleString('ru-RU') + ' ₸';
         } else {
             currentPriceValue = 0;
-            priceOutput.textContent = '0 ₸';
+            if(priceOutput) priceOutput.textContent = '0 ₸';
         }
     }
 
-    selectRank.addEventListener('change', () => {
-        updateMastersList();
-        updatePrice();
-    });
+    selectRank.addEventListener('change', () => { updateMastersList(); updatePrice(); });
     selectMaster.addEventListener('change', handleMasterChange);
     selectDay.addEventListener('change', handleDayChange);
     selectService.addEventListener('change', updatePrice);
-
 
     // ОТПРАВКА ДАННЫХ В FIREBASE
     document.getElementById('booking-form').onsubmit = async (e) => {
         e.preventDefault();
         
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'ОТПРАВКА...';
+        if(submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'ОТПРАВКА...';
+        }
 
         const name = document.getElementById('client-name').value;
         const phone = document.getElementById('client-phone').value;
@@ -546,16 +653,135 @@
             document.getElementById('booking-form').reset();
             updatePrice();
             resetDateTimeFields();
-            scheduleBox.style.display = 'none';
+            if(scheduleBox) scheduleBox.style.display = 'none';
 
         } catch (error) {
             console.error("Ошибка при сохранении в Firebase: ", error);
             alert('Произошла ошибка при отправке данных. Пожалуйста, попробуйте позже.');
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'ПОДТВЕРДИТЬ';
+            if(submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ПОДТВЕРДИТЬ';
+            }
         }
     };
+
+    // ========================================================
+    // --- ЛОГИКА ВНУТРЕННЕЙ ПОЧТЫ (УВЕДОМЛЕНИЙ АДМИНИСТРАТОРА) ---
+    // ========================================================
+    const mailModal = document.getElementById('mailModal');
+    const openMailBtn = document.getElementById('openMailBtn');
+    const closeMailModal = document.getElementById('closeMailModal');
+    const mailBadge = document.getElementById('mailBadge');
+    const mailListContainer = document.getElementById('mailListContainer');
+    
+    const tabHaircuts = document.getElementById('tabHaircuts');
+    const tabCosmetics = document.getElementById('tabCosmetics');
+    const countHaircuts = document.getElementById('countHaircuts');
+    const countCosmetics = document.getElementById('countCosmetics');
+
+    let currentTab = 'haircuts'; 
+    let dataHaircuts = [];
+    let dataCosmetics = [];
+
+    openMailBtn.onclick = () => {
+        mailModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        mailBadge.style.display = 'none'; 
+    };
+    closeMailModal.onclick = () => {
+        mailModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+    window.addEventListener('click', (e) => {
+        if (e.target === mailModal) {
+            mailModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    tabHaircuts.onclick = () => { switchTab('haircuts'); };
+    tabCosmetics.onclick = () => { switchTab('cosmetics'); };
+
+    function switchTab(tab) {
+        currentTab = tab;
+        tabHaircuts.classList.toggle('active', tab === 'haircuts');
+        tabCosmetics.classList.toggle('active', tab === 'cosmetics');
+        renderMail();
+    }
+
+    // Потоковое отслеживание коллекции 'appointments' (записи на стрижки)
+    const qAppointments = query(collection(db, "appointments"), orderBy("createdAt", "desc"));
+    onSnapshot(qAppointments, (snapshot) => {
+        dataHaircuts = [];
+        snapshot.forEach((doc) => {
+            dataHaircuts.push(doc.data());
+        });
+        if(countHaircuts) countHaircuts.textContent = dataHaircuts.length;
+        updateBadgeAndRender();
+    });
+
+    // Потоковое отслеживание коллекции 'cosmetics_orders' (заказы косметики)
+    const qCosmetics = query(collection(db, "cosmetics_orders"), orderBy("createdAt", "desc"));
+    onSnapshot(qCosmetics, (snapshot) => {
+        dataCosmetics = [];
+        snapshot.forEach((doc) => {
+            dataCosmetics.push(doc.data());
+        });
+        if(countCosmetics) countCosmetics.textContent = dataCosmetics.length;
+        updateBadgeAndRender();
+    }, (err) => {
+        console.log("Коллекция 'cosmetics_orders' пока пуста или еще не инициализирована.");
+    });
+
+    function updateBadgeAndRender() {
+        const totalNotifications = dataHaircuts.length + dataCosmetics.length;
+        if (totalNotifications > 0 && mailModal.style.display !== 'flex') {
+            mailBadge.textContent = totalNotifications;
+            mailBadge.style.display = 'flex';
+        }
+        renderMail();
+    }
+
+    function renderMail() {
+        mailListContainer.innerHTML = '';
+        const list = currentTab === 'haircuts' ? dataHaircuts : dataCosmetics;
+
+        if (list.length === 0) {
+            mailListContainer.innerHTML = `<div class="mail-empty">Уведомлений пока нет</div>`;
+            return;
+        }
+
+        list.forEach(item => {
+            const date = item.createdAt ? new Date(item.createdAt).toLocaleString('ru-RU') : 'Только что';
+            let html = '';
+
+            if (currentTab === 'haircuts') {
+                html = `
+                    <div class="mail-item">
+                        <span class="mail-date">${date}</span>
+                        <strong>Новая запись на стрижку!</strong><br>
+                        <b>Клиент:</b> ${item.clientName || 'Не указано'} (${item.clientPhone || 'Нет номера'})<br>
+                        <b>Услуга:</b> ${item.service || '—'}<br>
+                        <b>Мастер:</b> ${item.masterName || '—'} (${item.masterRank || '—'})<br>
+                        <b>Время:</b> ${item.bookingDayOfWeek || '—'}, ${item.bookingTime || '—'}<br>
+                        <b>Стоимость:</b> ${item.price ? item.price.toLocaleString('ru-RU') : 0} ₸
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="mail-item" style="border-left-color: #25d366;">
+                        <span class="mail-date">${date}</span>
+                        <strong>Новый заказ косметики!</strong><br>
+                        <b>Клиент:</b> ${item.clientName || 'Не указано'} (${item.clientPhone || 'Нет номера'})<br>
+                        <b>Товары:</b> ${item.products || 'Список пуст'}<br>
+                        <b>Сумма заказа:</b> ${item.totalPrice ? item.totalPrice.toLocaleString('ru-RU') : 0} ₸
+                    </div>
+                `;
+            }
+            mailListContainer.insertAdjacentHTML('beforeend', html);
+        });
+    }
 </script>
 
 </body>
